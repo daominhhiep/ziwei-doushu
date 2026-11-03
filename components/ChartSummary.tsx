@@ -53,7 +53,7 @@ export default function ChartSummary({ chart }: ChartSummaryProps) {
 
         <div className="flex flex-wrap items-start gap-4">
           <div>
-            <div className="text-[9px] mb-1.5" style={{ color: 'var(--t-faint)', opacity: 0.85 }}>Chính tinh cung Mệnh</div>
+            <div className="text-[11px] mb-1.5" style={{ color: 'var(--t-faint)', opacity: 0.85 }}>Chính tinh cung Mệnh</div>
             <div className="flex items-center gap-1">
               {mingStars.length > 0 ? (
                 mingStars.map(s => (
@@ -70,7 +70,7 @@ export default function ChartSummary({ chart }: ChartSummaryProps) {
 
           {keywords.length > 0 && (
             <div>
-              <div className="text-[9px] mb-1.5" style={{ color: 'var(--t-faint)', opacity: 0.85 }}>Đặc điểm tính cách</div>
+              <div className="text-[11px] mb-1.5" style={{ color: 'var(--t-faint)', opacity: 0.85 }}>Đặc điểm tính cách</div>
               <div className="flex flex-wrap gap-1.5">
                 {keywords.map(k => (
                   <span key={k} className="text-[10px] px-2 py-0.5 rounded-full"
@@ -87,7 +87,7 @@ export default function ChartSummary({ chart }: ChartSummaryProps) {
           )}
 
           <div className="ml-auto text-right">
-            <div className="text-[9px] mb-1" style={{ color: 'var(--t-faint)', opacity: 0.85 }}>Ngũ Hành Cục · Đại hạn hiện tại</div>
+            <div className="text-[11px] mb-1" style={{ color: 'var(--t-faint)', opacity: 0.85 }}>Ngũ Hành Cục · Đại hạn hiện tại</div>
             <div className="text-[11px]" style={{ color: 'var(--t-text2)' }}>{viTerm(chart.wuxingJuName)}</div>
             {currentDx && (
               <div className="text-[11px] text-purple-500 mt-0.5">
@@ -133,14 +133,14 @@ export default function ChartSummary({ chart }: ChartSummaryProps) {
               const c = colors[siHua] || colors['禄'];
               return (
                 <div key={name + siHua}
-                  className="flex items-center justify-between px-3 py-2 rounded-lg text-[10px]"
+                  className="flex flex-col gap-0.5 px-3 py-2 rounded-lg text-[12px] min-w-0"
                   style={{ background: c.bg, border: `1px solid ${c.border}`, color: c.text }}
                 >
-                  <span className="font-medium">{viTerm(name)}</span>
-                  <div className="flex items-center gap-1.5 text-right">
-                    <span style={{ opacity: 0.6 }} className="text-[9px]">{viTerm(palaceName)}</span>
-                    <span className="font-bold">{viTerm('化' + siHua)}</span>
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-medium truncate">{viTerm(name)}</span>
+                    <span className="font-bold whitespace-nowrap">{viTerm('化' + siHua)}</span>
                   </div>
+                  <span style={{ opacity: 0.7 }} className="text-[11px]">cung {viTerm(palaceName)}</span>
                 </div>
               );
             })}
@@ -160,7 +160,7 @@ export default function ChartSummary({ chart }: ChartSummaryProps) {
           <div className="text-[10px] tracking-widest mb-3 flex items-center gap-2" style={{ color: 'var(--t-faint)' }}>
             <span style={{ color: 'var(--t-gold)', opacity: 0.6 }}>◉</span>
             Cách cục
-            <span className="text-[9px] ml-auto" style={{ color: 'var(--t-faint)', opacity: 0.75 }}>{patterns.length} cách cục</span>
+            <span className="text-[11px] ml-auto" style={{ color: 'var(--t-faint)', opacity: 0.75 }}>{patterns.length} cách cục</span>
           </div>
           <div className="space-y-2">
             {patterns.map((p, i) => {
@@ -178,7 +178,7 @@ export default function ChartSummary({ chart }: ChartSummaryProps) {
                     <span className={`text-[11px] font-medium ${st.label}`}>{p.name}</span>
                     <div className="flex gap-1 ml-auto">
                       {p.palaces.slice(0, 2).map(pa => (
-                        <span key={pa} className={`text-[8px] px-1.5 py-px rounded-full border ${st.badge}`}>
+                        <span key={pa} className={`text-[10px] px-1.5 py-px rounded-full border ${st.badge}`}>
                           {viTerm(pa)}
                         </span>
                       ))}
@@ -191,21 +191,21 @@ export default function ChartSummary({ chart }: ChartSummaryProps) {
                   {p.conditions && (
                     <div className="mt-2 pl-3.5 space-y-0.5">
                       {p.conditions.required.length > 0 && (
-                        <div className="text-[9px] leading-relaxed" style={{ color: 'var(--t-text2)', opacity: 0.85 }}>
+                        <div className="text-[11px] leading-relaxed" style={{ color: 'var(--t-text2)', opacity: 0.85 }}>
                           <span className="font-medium" style={{ color: 'var(--t-gold)' }}>Cần có</span>
                           <span style={{ opacity: 0.6 }}> · </span>
                           {p.conditions.required.join('; ')}
                         </div>
                       )}
                       {p.conditions.bonus && p.conditions.bonus.length > 0 && (
-                        <div className="text-[9px] leading-relaxed" style={{ color: 'var(--t-text2)', opacity: 0.85 }}>
+                        <div className="text-[11px] leading-relaxed" style={{ color: 'var(--t-text2)', opacity: 0.85 }}>
                           <span className="font-medium text-emerald-500">Thêm điểm</span>
                           <span style={{ opacity: 0.6 }}> · </span>
                           {p.conditions.bonus.join('; ')}
                         </div>
                       )}
                       {p.conditions.breaking && p.conditions.breaking.length > 0 && (
-                        <div className="text-[9px] leading-relaxed" style={{ color: 'var(--t-text2)', opacity: 0.85 }}>
+                        <div className="text-[11px] leading-relaxed" style={{ color: 'var(--t-text2)', opacity: 0.85 }}>
                           <span className="font-medium text-orange-500">Phá cách</span>
                           <span style={{ opacity: 0.6 }}> · </span>
                           {p.conditions.breaking.join('; ')}
@@ -215,7 +215,7 @@ export default function ChartSummary({ chart }: ChartSummaryProps) {
                   )}
 
                   {p.source && (
-                    <div className="text-[9px] mt-1.5 pl-3.5" style={{ color: 'var(--t-faint)', opacity: 0.5 }}>
+                    <div className="text-[11px] mt-1.5 pl-3.5" style={{ color: 'var(--t-faint)', opacity: 0.5 }}>
                       Nguồn · {p.source}
                     </div>
                   )}
@@ -254,7 +254,7 @@ export default function ChartSummary({ chart }: ChartSummaryProps) {
                 }}
               >
                 <div className="font-mono tabular-nums">{dx.startAge}~{dx.endAge}</div>
-                <div className="text-[9px] mt-0.5" style={{ opacity: 0.7 }}>{viTerm(dx.palaceName)}</div>
+                <div className="text-[11px] mt-0.5" style={{ opacity: 0.7 }}>{viTerm(dx.palaceName)}</div>
               </div>
             );
           })}

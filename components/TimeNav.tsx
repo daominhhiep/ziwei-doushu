@@ -120,7 +120,7 @@ export default function TimeNav({
           <div className="flex items-center gap-0.5">
             <button
               onClick={e => { e.stopPropagation(); onYearChange(liunianYear - 1); if (view !== 'liunian') onViewChange('liunian'); }}
-              className="text-[9px] w-4 h-4 flex items-center justify-center rounded"
+              className="text-[11px] w-4 h-4 flex items-center justify-center rounded"
               style={{ color: 'var(--t-faint)' }}
             >
               ‹
@@ -134,7 +134,7 @@ export default function TimeNav({
             </span>
             <button
               onClick={e => { e.stopPropagation(); onYearChange(liunianYear + 1); if (view !== 'liunian') onViewChange('liunian'); }}
-              className="text-[9px] w-4 h-4 flex items-center justify-center rounded"
+              className="text-[11px] w-4 h-4 flex items-center justify-center rounded"
               style={{ color: 'var(--t-faint)' }}
             >
               ›
@@ -151,14 +151,14 @@ export default function TimeNav({
           transition={{ duration: 0.2 }}
           className="flex items-center gap-2 mt-1.5 px-1 flex-wrap"
         >
-          <span className="text-[9px]" style={{ color: 'var(--t-faint)' }}>
+          <span className="text-[11px]" style={{ color: 'var(--t-faint)' }}>
             {view === 'daxian' ? 'Đại hạn' : `${liunianYear}`} · Tứ Hóa can {viTerm(overlayInfo.stemName)}:
           </span>
           {(['禄', '权', '科', '忌'] as const).map(sh => {
             const starName = Object.keys(overlayInfo.overlay).find(k => overlayInfo.overlay[k] === sh);
             if (!starName) return null;
             return (
-              <span key={sh} className="text-[9px] font-medium" style={{ color: SIHUA_COLORS[sh] }}>
+              <span key={sh} className="text-[11px] font-medium" style={{ color: SIHUA_COLORS[sh] }}>
                 {viTerm(starName)} {viTerm('化' + sh)}
               </span>
             );
