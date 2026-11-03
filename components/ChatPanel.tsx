@@ -95,7 +95,7 @@ export default function ChatPanel({ chart }: ChatPanelProps) {
   };
 
   return (
-    <div className="flex flex-col h-full rounded-xl overflow-hidden card-glass">
+    <div className="flex flex-col rounded-xl overflow-hidden card-glass" style={{ height: 'min(75vh, 680px)', minHeight: 420 }}>
       {/* 标题 */}
       <div className="px-4 py-3 flex-shrink-0" style={{ borderBottom: '1px solid var(--t-border)' }}>
         <h3 className="text-xs font-medium tracking-widest" style={{ color: 'var(--t-gold)' }}>Giải đoán lá số bằng AI</h3>

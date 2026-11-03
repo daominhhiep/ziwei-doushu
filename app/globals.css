@@ -434,3 +434,26 @@ body {
    select 本身是半透明底 + 浅色字，Windows 上原生下拉列表是白底，浅灰字配白底看不清（#14） */
 [data-theme="dark"] select { color-scheme: dark; }
 [data-theme="dark"] select option { background-color: var(--bg-2); color: var(--tx-1); }
+
+/* Custom select look: no native arrow, own chevron, comfortable hit area. */
+.ui-select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  padding-right: 38px !important;
+  background-repeat: no-repeat !important;
+  background-position: right 14px center !important;
+  background-size: 12px 12px !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='%23a0782a' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2.5 4.5 6 8l3.5-3.5'/%3E%3C/svg%3E") !important;
+  font-weight: 500;
+  min-height: 44px;
+  transition: border-color .2s, background-color .2s, box-shadow .2s;
+}
+[data-theme="dark"] .ui-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='%23d4a843' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2.5 4.5 6 8l3.5-3.5'/%3E%3C/svg%3E") !important;
+}
+.ui-select:hover:not(:disabled) { box-shadow: 0 0 0 3px rgba(212,168,67,0.10); }
+.ui-select:focus-visible { box-shadow: 0 0 0 3px rgba(212,168,67,0.25); }
+.ui-select:disabled { cursor: not-allowed; }
+.ui-select::-ms-expand { display: none; }
