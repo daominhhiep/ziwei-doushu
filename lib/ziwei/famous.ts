@@ -19,6 +19,10 @@ export interface FamousPerson {
   gender: 'male' | 'female';
   notable: string;               // 命盘亮点提示（启发用户兴趣）
   notableEn: string;
+  /** Bản hiển thị tiếng Việt */
+  nameVi: string;
+  descriptionVi: string;
+  notableVi: string;
 }
 
 export const FAMOUS_PERSONS: FamousPerson[] = [
@@ -34,6 +38,9 @@ export const FAMOUS_PERSONS: FamousPerson[] = [
     gender: 'male',
     notable: '命盘显示极强的破格重建之力，官禄宫星曜与互联网商业帝国高度对应',
     notableEn: 'The chart shows an exceptional ability to break established patterns and rebuild, while the Career Palace closely parallels the rise of an internet business empire.',
+    nameVi: 'Mã Vân (Jack Ma)',
+    descriptionVi: 'Nhà sáng lập Alibaba',
+    notableVi: 'Lá số cho thấy sức phá cách và tái thiết rất mạnh; các sao ở cung Quan Lộc tương ứng rõ với đế chế thương mại Internet.',
   },
   {
     id: 'li-jiacheng',
@@ -46,6 +53,9 @@ export const FAMOUS_PERSONS: FamousPerson[] = [
     gender: 'male',
     notable: '财帛宫四化是研究东方首富命盘的绝佳案例，禄存守财，越积越厚',
     notableEn: 'The Four Transformations in the Wealth Palace make this a compelling case study of extraordinary wealth; Lu Cun preserves assets and supports steady accumulation.',
+    nameVi: 'Lý Gia Thành',
+    descriptionVi: 'Tỷ phú Hồng Kông, người sáng lập tập đoàn CK Hutchison',
+    notableVi: 'Tứ Hóa ở cung Tài Bạch là ca nghiên cứu điển hình về lá số đại phú; Lộc Tồn giữ của, càng tích càng dày.',
   },
   {
     id: 'ren-zhengfei',
@@ -58,6 +68,9 @@ export const FAMOUS_PERSONS: FamousPerson[] = [
     gender: 'male',
     notable: '七杀入命格局，一生逆风而行，越打压越强大，倪师七杀理论的活教材',
     notableEn: 'Qi Sha in the Life Palace points to a life strengthened by adversity—the greater the pressure, the stronger the response—making this a vivid case study of traditional Qi Sha theory.',
+    nameVi: 'Nhậm Chính Phi',
+    descriptionVi: 'Nhà sáng lập Huawei',
+    notableVi: 'Cách Thất Sát nhập Mệnh: cả đời đi ngược gió, càng bị chèn ép càng mạnh — ví dụ sống động cho lý thuyết Thất Sát của thầy Nghê.',
   },
 
   // ─── 文艺名人 ─────────────────────────────────────────────
@@ -72,6 +85,9 @@ export const FAMOUS_PERSONS: FamousPerson[] = [
     gender: 'female',
     notable: '命盘孤独星曜组合与其传奇感情经历、文学成就形成神奇对照',
     notableEn: 'The chart’s combination of solitary stars forms a striking parallel with her celebrated romantic history and literary achievements.',
+    nameVi: 'Trương Ái Linh',
+    descriptionVi: 'Bậc thầy văn học hiện đại Trung Quốc',
+    notableVi: 'Tổ hợp sao cô độc trong lá số đối chiếu kỳ lạ với đời tình cảm truyền kỳ và thành tựu văn chương của bà.',
   },
   {
     id: 'jay-chou',
@@ -84,6 +100,9 @@ export const FAMOUS_PERSONS: FamousPerson[] = [
     gender: 'male',
     notable: '文曲星与贪狼的组合，天生才艺之命，命盘解释了他为何能横跨音乐各风格',
     notableEn: 'The combination of Wen Qu and Tan Lang suggests natural artistic talent and helps explain his ability to move across musical styles.',
+    nameVi: 'Châu Kiệt Luân',
+    descriptionVi: 'Ông hoàng nhạc pop Hoa ngữ',
+    notableVi: 'Văn Khúc kết hợp Tham Lang — mệnh tài hoa bẩm sinh, lý giải vì sao anh làm chủ được nhiều phong cách âm nhạc.',
   },
   {
     id: 'wang-fei',
@@ -96,6 +115,9 @@ export const FAMOUS_PERSONS: FamousPerson[] = [
     gender: 'female',
     notable: '夫妻宫星曜与其两段传奇婚姻高度对应，感情格局极具研究价值',
     notableEn: 'The stars in the Marriage Palace closely parallel her two high-profile marriages, making the relationship pattern especially valuable for study.',
+    nameVi: 'Vương Phi',
+    descriptionVi: 'Nữ ca sĩ huyền thoại của làng nhạc Hoa ngữ',
+    notableVi: 'Các sao ở cung Phu Thê ứng rất rõ với hai cuộc hôn nhân nổi tiếng của bà; cách cục tình cảm rất đáng nghiên cứu.',
   },
   {
     id: 'lin-zhiling',
@@ -108,6 +130,9 @@ export const FAMOUS_PERSONS: FamousPerson[] = [
     gender: 'female',
     notable: '太阴守命的女性美貌典范，命盘完美印证倪师"太阴入命女孩最漂亮"的论断',
     notableEn: 'Tai Yin guarding the Life Palace is a classic symbol of feminine grace, closely echoing the traditional view that this placement bestows exceptional beauty.',
+    nameVi: 'Lâm Chí Linh',
+    descriptionVi: 'Người mẫu, diễn viên Đài Loan',
+    notableVi: 'Thái Âm thủ Mệnh — hình mẫu nhan sắc nữ giới, đúng với nhận định của thầy Nghê: "nữ có Thái Âm nhập Mệnh là đẹp nhất".',
   },
 
   // ─── 科技精英 ─────────────────────────────────────────────
@@ -122,6 +147,9 @@ export const FAMOUS_PERSONS: FamousPerson[] = [
     gender: 'male',
     notable: '破军入命格局，被亲生父母遗弃又创建苹果帝国，破而后立的命盘典范',
     notableEn: 'Po Jun in the Life Palace, adoption at birth, and the creation of the Apple empire make this an archetypal chart of renewal after disruption.',
+    nameVi: 'Steve Jobs',
+    descriptionVi: 'Đồng sáng lập Apple',
+    notableVi: 'Cách Phá Quân nhập Mệnh: bị cha mẹ ruột cho đi làm con nuôi rồi dựng nên đế chế Apple — điển hình của "phá rồi mới lập".',
   },
   {
     id: 'elon-musk',
@@ -134,6 +162,9 @@ export const FAMOUS_PERSONS: FamousPerson[] = [
     gender: 'male',
     notable: '杀破狼格局的极致体现，命盘中驿马星旺盛，一生在改变人类未来边界',
     notableEn: 'An intense expression of the Sha Po Lang pattern, with a powerful Travel Horse star and a life devoted to pushing the boundaries of humanity’s future.',
+    nameVi: 'Elon Musk',
+    descriptionVi: 'Nhà sáng lập SpaceX, CEO Tesla',
+    notableVi: 'Thể hiện tột bậc của cách Sát Phá Tham; sao Thiên Mã vượng, cả đời mở rộng giới hạn tương lai của nhân loại.',
   },
 
   // ─── 体育明星 ─────────────────────────────────────────────
@@ -148,6 +179,9 @@ export const FAMOUS_PERSONS: FamousPerson[] = [
     gender: 'male',
     notable: '天梁守命，高大威严，官禄宫星象与其职业成就高度吻合',
     notableEn: 'Tian Liang guarding the Life Palace suggests stature and dignity, while the Career Palace closely aligns with his professional achievements.',
+    nameVi: 'Diêu Minh',
+    descriptionVi: 'Trung phong huyền thoại NBA, biểu tượng bóng rổ Trung Quốc',
+    notableVi: 'Thiên Lương thủ Mệnh, cao lớn uy nghiêm; tinh tượng cung Quan Lộc khớp với thành tựu sự nghiệp.',
   },
   {
     id: 'li-na',
@@ -160,6 +194,9 @@ export const FAMOUS_PERSONS: FamousPerson[] = [
     gender: 'female',
     notable: '七杀化气，命中注定与人竞争，大限流年与法网夺冠时间点精准对应',
     notableEn: 'Qi Sha channels a powerful competitive drive, while the major periods and annual cycles closely align with the timing of her French Open victory.',
+    nameVi: 'Lý Na',
+    descriptionVi: 'Nhà vô địch Grand Slam quần vợt Trung Quốc',
+    notableVi: 'Thất Sát hóa khí, số mệnh gắn với cạnh tranh; Đại Hạn và Lưu Niên khớp chính xác với thời điểm vô địch Roland Garros.',
   },
 ];
 
