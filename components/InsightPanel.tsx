@@ -33,101 +33,41 @@ const TOPICS = [
 ] as const;
 
 const TOPIC_PROMPTS: Record<string, string> = {
-  overview: `Hãy viết phần tổng quan mệnh cách theo cấu trúc sau:
+  overview: `Tóm tắt lá số của tôi theo 3 phần:
 
-**【Định tính mệnh cách】**
-Một câu tóm tắt cách cục cốt lõi của lá số và khí chất của đương số.
+## Tóm lại
+## Điểm mạnh
+## Cần lưu ý`,
 
-**【Giải chính tinh】**
-Đặc điểm cốt lõi của chính tinh cung Mệnh, dẫn lời hoặc quan điểm của Nghê Hải Hạ.
+  love: `Xem chuyện tình cảm, hôn nhân của tôi theo 3 phần:
 
-**【Tam phương tứ chính】**
-Phân tích mối liên động giữa ba cung Tài Bạch, Quan Lộc, Thiên Di và cách cục tổng thể.
+## Tóm lại
+## 10 năm hiện tại
+## Lời khuyên`,
 
-**【Đại hạn hiện tại】**
-Xu hướng vận của đại hạn hiện tại và điều đáng chú ý nhất.
+  career: `Xem công việc, sự nghiệp của tôi theo 3 phần (hợp làm công hay tự kinh doanh, ngành nghề hợp):
 
-**【Ưu điểm và lưu ý】**
-Thế mạnh bẩm sinh trong lá số, cùng những rủi ro hoặc bài học cần lưu ý.`,
+## Tóm lại
+## 10 năm hiện tại
+## Lời khuyên`,
 
-  love: `Hãy phân tích sâu vận tình cảm, hôn nhân theo cấu trúc sau:
+  wealth: `Xem tiền bạc của tôi theo 3 phần (kiếm tiền thế nào, giữ tiền thế nào):
 
-**【Cách cục tình cảm】**
-Một câu định tính mệnh cách về tình cảm.
+## Tóm lại
+## 10 năm hiện tại
+## Lời khuyên`,
 
-**【Phân tích cung Phu Thê】**
-Chính tinh, Tứ Hóa của cung Phu Thê và cách giải cụ thể theo hệ thống Nghê Hải Hạ.
+  health: `Xem sức khỏe của tôi theo 3 phần:
 
-**【Liên động tam phương】**
-Ảnh hưởng của các cung liên quan đến tình cảm.
+## Tóm lại
+## Cần để ý
+## Lời khuyên`,
 
-**【Tình cảm trong đại hạn hiện tại】**
-Xu hướng tình cảm trong 10 năm hiện tại và các mốc quan trọng.
+  personality: `Xem tính cách của tôi theo 3 phần:
 
-**【Lời khuyên thực tế】**
-Lời khuyên cụ thể, làm được ngay về tình cảm.`,
-
-  career: `Hãy phân tích sâu vận sự nghiệp theo cấu trúc sau:
-
-**【Cách cục sự nghiệp】**
-Một câu định tính mệnh cách sự nghiệp: hợp làm công hay hợp khởi nghiệp.
-
-**【Phân tích cung Quan Lộc】**
-Chính tinh, Tứ Hóa của cung Quan Lộc và nhận định của thầy Nghê về cấu hình này.
-
-**【Liên động cung Tài Bạch】**
-Quan hệ giữa tài vận và sự nghiệp, phân tích nguồn tiền.
-
-**【Sự nghiệp trong đại hạn hiện tại】**
-Xu hướng sự nghiệp trong 10 năm hiện tại.
-
-**【Lời khuyên thực tế】**
-Hướng đi, ngành nghề và chiến lược phù hợp.`,
-
-  wealth: `Hãy phân tích sâu tài vận theo cấu trúc sau:
-
-**【Cách cục tài vận】**
-Một câu định tính kiểu tài vận: chủ động kiếm tiền hay tiền tự đến.
-
-**【Phân tích cung Tài Bạch】**
-Chính tinh, Tứ Hóa của cung Tài Bạch, nguồn của cải và cách tiền lưu chuyển.
-
-**【Cung Điền Trạch (kho tiền)】**
-Phân tích khả năng tích lũy và vận nhà đất.
-
-**【Tài vận đại hạn hiện tại】**
-Xu hướng tài vận hiện tại và điều cần lưu ý.
-
-**【Lời khuyên tài chính】**
-Lời khuyên tài chính cụ thể.`,
-
-  health: `Hãy phân tích vận sức khỏe theo cấu trúc sau:
-
-**【Chính tinh cung Tật Ách】**
-Các sao ở cung Tật Ách và ý nghĩa về sức khỏe.
-
-**【Rủi ro chính】**
-Kết hợp lý thuyết Tý Ngọ lưu chú của Nghê Hải Hạ, phân tích các nguy cơ sức khỏe chính và bộ phận cần chú ý.
-
-**【Xu hướng sức khỏe theo đại hạn】**
-Xu hướng sức khỏe hiện tại và các giai đoạn quan trọng.
-
-**【Lời khuyên phòng ngừa】**
-Điều cần chú ý cụ thể và hướng dưỡng sinh.`,
-
-  personality: `Hãy phân tích sâu đặc điểm tính cách theo cấu trúc sau:
-
-**【Tính cách theo chính tinh cung Mệnh】**
-Đặc điểm tính cách cốt lõi của chính tinh cung Mệnh, dẫn lời thầy Nghê.
-
-**【Tổng hợp tính cách qua tam phương】**
-Ảnh hưởng của ba cung Tài Bạch, Quan Lộc, Thiên Di đến tính cách, mô tả toàn diện.
-
-**【Cách giao tiếp, quan hệ】**
-Cách tương tác với người khác và phong cách đối nhân xử thế.
-
-**【Ưu điểm và bài học cuộc đời】**
-Thế mạnh bẩm sinh và những bài học cuộc đời cần đối mặt.`,
+## Tóm lại
+## Điểm mạnh
+## Điểm cần rèn`,
 };
 
 const PALACE_ROLES: Record<string, string> = {
@@ -145,18 +85,18 @@ const PALACE_ROLES: Record<string, string> = {
   '父母宫': 'quan hệ với cha mẹ, giấy tờ hợp đồng',
 };
 
-/** Render AI markdown: **【Title】** → gold header, **bold** → strong */
+/** Render AI markdown: "## Title" (or legacy **【Title】**) → gold header, **bold** → strong */
 function AiContent({ text, streaming }: { text: string; streaming?: boolean }) {
   const lines = text.split('\n');
   return (
     <div className="space-y-0.5">
       {lines.map((line, i) => {
-        const sectionMatch = line.match(/^\*\*【(.+?)】\*\*$/);
+        const sectionMatch = line.match(/^#{1,3}\s+(.+)$/) ?? line.match(/^\*\*【(.+?)】\*\*$/);
         if (sectionMatch) {
           return (
             <div key={i} className="pt-3 pb-0.5 first:pt-0">
-              <span className="text-[11px] font-semibold tracking-wide" style={{ color: 'var(--t-gold)' }}>
-                【{sectionMatch[1]}】
+              <span className="text-[13px] font-semibold" style={{ color: 'var(--t-gold)' }}>
+                {sectionMatch[1].replace(/\*\*/g, '')}
               </span>
             </div>
           );
@@ -164,7 +104,7 @@ function AiContent({ text, streaming }: { text: string; streaming?: boolean }) {
         if (line.trim() === '') return <div key={i} className="h-1" />;
         const parts = line.split(/\*\*(.+?)\*\*/);
         return (
-          <div key={i} className="text-[11px] leading-relaxed" style={{ color: 'var(--t-text2)' }}>
+          <div key={i} className="text-[13px] leading-relaxed" style={{ color: 'var(--t-text2)' }}>
             {parts.map((part, j) =>
               j % 2 === 0
                 ? part
@@ -221,19 +161,11 @@ export default function InsightPanel({ chart, selectedPalace, selectedSiHua }: I
     const role = PALACE_ROLES[selectedPalace.name] ?? '';
 
     const palaceVi = `cung ${viTerm(selectedPalace.name)}`;
-    const prompt = `Hãy phân tích trọng tâm 【${palaceVi}】 (chủ về: ${role}), chính tinh của cung này là ${starDesc}, theo cấu trúc sau:
+    const prompt = `Xem ${palaceVi} của tôi (chủ về: ${role}; chính tinh: ${starDesc}) theo 3 phần:
 
-**【Định tính cung】**
-Ý nghĩa của ${palaceVi} trong lá số và nhận định tổng thể về cách phối sao này.
-
-**【Giải chính tinh】**
-Cách giải chính tinh ở cung này theo hệ thống Nghê Hải Hạ, dẫn quan điểm cụ thể.
-
-**【Liên động tam phương tứ chính】**
-Ảnh hưởng của các cung tam phương tứ chính đến cung này.
-
-**【Lời khuyên thực tế】**
-Lời khuyên cụ thể dựa trên cung này.`;
+## Tóm lại
+## Ảnh hưởng đến tôi
+## Lời khuyên`;
 
     setSuggestion({ label: `Giải đoán ${palaceVi}`, prompt });
   }, [selectedPalace]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -254,22 +186,11 @@ Lời khuyên cụ thể dựa trên cung này.`;
     const hua = viTerm('化' + selectedSiHua.siHua);
     const starHua = `${viTerm(selectedSiHua.starName)} ${hua}`;
 
-    const prompt = `Hãy phân tích ảnh hưởng phi hóa của 【${viewLabel} ${starHua}】 theo cấu trúc sau:
+    const prompt = `${starHua} (${viewLabel}) rơi vào ${palaceName}. Nó ảnh hưởng gì đến tôi? Trả lời theo 3 phần:
 
-**【Ý nghĩa cơ bản của ${hua}】**
-Ý nghĩa cốt lõi của ${hua} trong hệ thống Nghê Hải Hạ, và ý nghĩa riêng của ${starHua}.
-
-**【Ảnh hưởng tại cung nhập】**
-${starHua} rơi vào 【${palaceName}】: lĩnh vực mà cung này chủ quản bị ảnh hưởng thế nào, thầy Nghê giải ra sao.
-
-**【Đường phi hóa tam phương tứ chính】**
-Sau khi ${hua} nhập ${palaceName}, ảnh hưởng liên động đến tam phương tứ chính (cung đối diện và hai cung tam hợp).
-
-**【Ảnh hưởng đến vận hiện tại】**
-Trong khung thời gian ${viewLabel}, ${hua} này ảnh hưởng cụ thể thế nào đến vận gần đây của đương số.
-
-**【Lời khuyên thực tế】**
-Lời khuyên cụ thể, làm được ngay dựa trên Tứ Hóa này.`;
+## Tóm lại
+## Ảnh hưởng trong ${viewLabel.toLowerCase()}
+## Lời khuyên`;
 
     setSuggestion({ label: `Giải đoán ${starHua}`, prompt });
   }, [selectedSiHua]); // eslint-disable-line react-hooks/exhaustive-deps
