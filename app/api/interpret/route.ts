@@ -15,7 +15,7 @@ import type { ZiweiChart } from '@/lib/ziwei/types';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-const MODEL = 'claude-opus-5-5';
+const MODEL = 'claude-sonnet-5-5';
 const MAX_MESSAGES = 40;
 const MAX_MESSAGE_CHARS = 8000;
 
