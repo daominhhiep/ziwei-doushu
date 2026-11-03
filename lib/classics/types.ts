@@ -12,23 +12,27 @@ export interface Paragraph {
   idx: number;
   /** 段落原文（古文） */
   text: string;
-  /** 现代翻译（可选，未来填充） */
+  /** Bản dịch tiếng Việt (hiển thị dưới nguyên văn) */
   translation?: string;
   /** 倪师注解（可选，标注来源） */
   niNote?: string;
 }
 
 export interface Chapter {
-  /** 章节标题（如"卷一"、"总论篇"）*/
+  /** 章节标题（显示用，越南语）*/
   title: string;
+  /** 章节原标题（中文）*/
+  titleZh?: string;
   /** 章节副标题/简介（可选）*/
   subtitle?: string;
   paragraphs: Paragraph[];
 }
 
 export interface Book {
-  /** 书名 */
+  /** 书名（显示用，Hán Việt）*/
   title: string;
+  /** 中文原书名 */
+  titleZh?: string;
   /** 书 slug（URL 用，如 'guisuifu'）*/
   slug: string;
   /** 朝代 */
@@ -51,4 +55,8 @@ export interface SearchHit {
   snippet: string;
   /** 原文 */
   text: string;
+  /** 越南语译文 */
+  translation?: string;
+  /** 命中位置：原文或译文 */
+  matchedIn: 'text' | 'translation';
 }
