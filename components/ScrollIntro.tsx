@@ -8,9 +8,9 @@ interface ScrollIntroProps {
   skipLabel?: string;
 }
 
-const BEIDOU = ['天枢', '天璇', '天玑', '天权', '玉衡', '开阳', '摇光'];
+const BEIDOU = ['Thiên Xu', 'Thiên Tuyền', 'Thiên Cơ', 'Thiên Quyền', 'Ngọc Hành', 'Khai Dương', 'Dao Quang'];
 
-export default function ScrollIntro({ onComplete, skipLabel = '跳 过' }: ScrollIntroProps) {
+export default function ScrollIntro({ onComplete, skipLabel = 'Bỏ qua' }: ScrollIntroProps) {
   // visible：整个 intro 是否在显示
   // unrolled：卷轴是否已展开（控制内容浮现）
   const [visible, setVisible] = useState(true);
@@ -125,16 +125,16 @@ export default function ScrollIntro({ onComplete, skipLabel = '跳 过' }: Scrol
                   display: 'flex', flexDirection: 'column',
                   alignItems: 'center', justifyContent: 'center',
                   padding: '0 clamp(40px, 8vw, 120px)',
-                  fontFamily: '"STSong", "Songti SC", "SimSun", serif',
+                  fontFamily: '"Noto Serif", Georgia, "Times New Roman", "STSong", "Songti SC", "SimSun", serif',
                 }}
               >
                 {/* 顶部装饰：北斗七星名 */}
                 <div style={{
                   fontSize: 'clamp(10px, 1.1vw, 12px)',
                   color: '#8b5d18',
-                  letterSpacing: '0.45em',
+                  letterSpacing: '0.15em',
                   marginBottom: 'clamp(20px, 3vh, 36px)',
-                  fontFamily: '"STKaiti", "Kaiti SC", serif',
+                  fontFamily: '"Noto Serif", Georgia, "STKaiti", "Kaiti SC", serif',
                   whiteSpace: 'nowrap',
                   opacity: 0.85,
                 }}>
@@ -150,39 +150,39 @@ export default function ScrollIntro({ onComplete, skipLabel = '跳 过' }: Scrol
 
                 {/* 大字「紫微命盘」 */}
                 <h1 style={{
-                  fontSize: 'clamp(48px, 8vw, 110px)',
+                  fontSize: 'clamp(34px, 6.5vw, 88px)',
                   fontWeight: 700,
                   color: '#1a1208',
-                  letterSpacing: 'clamp(0.18em, 0.25vw, 0.3em)',
+                  letterSpacing: '0.06em',
                   lineHeight: 1.05,
                   margin: 0,
                   textShadow: '0 1px 0 rgba(255,250,235,0.3)',
                   whiteSpace: 'nowrap',
                 }}>
-                  紫微命盘
+                  Lá Số Tử Vi
                 </h1>
 
                 {/* 副标 楷体 */}
                 <div style={{
                   fontSize: 'clamp(13px, 1.5vw, 18px)',
                   color: '#6b4818',
-                  letterSpacing: '0.4em',
-                  fontFamily: '"STKaiti", "Kaiti SC", serif',
+                  letterSpacing: '0.2em',
+                  fontFamily: '"Noto Serif", Georgia, "STKaiti", "Kaiti SC", serif',
                   marginTop: 'clamp(16px, 2.5vh, 24px)',
                   marginBottom: '6px',
                   whiteSpace: 'nowrap',
                 }}>
-                  观 天 之 象 · 察 人 之 命
+                  Xem tượng trời · Hiểu mệnh người
                 </div>
                 <div style={{
                   fontSize: 'clamp(11px, 1.2vw, 14px)',
                   color: '#8b6410',
-                  letterSpacing: '0.3em',
-                  fontFamily: '"STSong", serif',
+                  letterSpacing: '0.12em',
+                  fontFamily: '"Noto Serif", Georgia, "STSong", serif',
                   whiteSpace: 'nowrap',
                   opacity: 0.85,
                 }}>
-                  倪海厦《天纪》正宗体系
+                  Hệ thống chính tông «Thiên Kỷ» của Nghê Hải Hạ
                 </div>
 
                 {/* 朱砂方印 */}
@@ -297,8 +297,8 @@ export default function ScrollIntro({ onComplete, skipLabel = '跳 过' }: Scrol
               borderRadius: '4px',
               fontSize: '12px',
               cursor: 'pointer',
-              fontFamily: '"STSong", serif',
-              letterSpacing: '0.25em',
+              fontFamily: '"Noto Serif", Georgia, "STSong", serif',
+              letterSpacing: '0.1em',
               transition: 'border-color 0.2s, color 0.2s',
             }}
             onMouseEnter={e => {

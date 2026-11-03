@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: { params: Promise<{ book: str
   const book = getBookBySlug(slug);
   if (!book) return {};
   return {
-    title: `《${book.title}》· ${book.dynasty} · 紫微斗数古籍原典库`,
+    title: `${book.title}${book.titleZh ? `《${book.titleZh}》` : ''} · ${book.dynasty} · Thư viện cổ thư Tử Vi Đẩu Số`,
     description: book.intro,
   };
 }
@@ -30,13 +30,13 @@ export default async function BookPage({ params }: { params: Promise<{ book: str
       <div className="px-6 py-4 flex items-center justify-between"
         style={{ borderBottom: '1px solid rgba(184,146,42,0.15)', background: 'var(--bg-page)' }}>
         <Link href="/library" style={{ fontSize: '12px', color: 'var(--ac)', letterSpacing: '0.3em', textDecoration: 'none' }}>
-          ← 古籍库
+          ← Thư viện
         </Link>
         <div style={{ fontSize: '12px', color: 'var(--tx-3)', letterSpacing: '0.2em' }}>
-          《{book.title}》
+          {book.title}
         </div>
         <Link href="/" style={{ fontSize: '12px', color: 'var(--ac)', letterSpacing: '0.2em', textDecoration: 'none' }}>
-          首页 →
+          Trang chủ →
         </Link>
       </div>
 
@@ -47,8 +47,13 @@ export default async function BookPage({ params }: { params: Promise<{ book: str
             {book.dynasty} · {book.author}
           </div>
           <h1 style={{ fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: 700, color: 'var(--tx-0)', letterSpacing: '0.15em', marginBottom: '14px' }}>
-            《{book.title}》
+            {book.title}
           </h1>
+          {book.titleZh && (
+            <div style={{ fontSize: '16px', color: 'var(--tx-3)', letterSpacing: '0.15em', marginBottom: '14px' }}>
+              《{book.titleZh}》
+            </div>
+          )}
           <p style={{ fontSize: '13px', color: 'var(--tx-2)', lineHeight: 1.8, maxWidth: '500px', margin: '0 auto' }}>
             {book.intro}
           </p>
@@ -57,7 +62,7 @@ export default async function BookPage({ params }: { params: Promise<{ book: str
         {/* 章节目录 */}
         <div style={{ background: 'var(--bg-card)', borderRadius: '14px', border: '1px solid rgba(184,146,42,0.2)', overflow: 'hidden' }}>
           <div style={{ padding: '14px 20px', borderBottom: '1px solid rgba(184,146,42,0.15)', fontSize: '11px', color: 'var(--tx-3)', letterSpacing: '0.3em' }}>
-            CHAPTERS · 章节目录
+            CHAPTERS · Mục lục
           </div>
           {book.chapters.map((chapter, i) => (
             <Link
@@ -81,6 +86,11 @@ export default async function BookPage({ params }: { params: Promise<{ book: str
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: '15px', color: 'var(--tx-0)', fontWeight: 500, letterSpacing: '0.08em', marginBottom: '2px' }}>
                   {chapter.title}
+                  {chapter.titleZh && (
+                    <span style={{ fontSize: '12px', color: 'var(--tx-3)', fontWeight: 400, marginLeft: '8px' }}>
+                      {chapter.titleZh}
+                    </span>
+                  )}
                 </div>
                 {chapter.subtitle && (
                   <div style={{ fontSize: '11px', color: 'var(--tx-3)' }}>
@@ -89,7 +99,7 @@ export default async function BookPage({ params }: { params: Promise<{ book: str
                 )}
               </div>
               <div style={{ fontSize: '10px', color: 'var(--tx-3)', letterSpacing: '0.1em' }}>
-                {chapter.paragraphs.length} 段
+                {chapter.paragraphs.length} đoạn
               </div>
               <div style={{ fontSize: '12px', color: 'var(--ac)' }}>→</div>
             </Link>

@@ -31,20 +31,21 @@ export const TOPIC_PALACE_NAME: Record<TopicKey, string> = {
   parents:     '父母',
 };
 
+// 显示用标签（越南语）；TopicKey 与 TOPIC_PALACE_NAME 仍为引擎标识，勿改
 export const TOPIC_LABEL: Record<TopicKey, string> = {
-  overview:    '命格总览',
-  personality: '性格特质',
-  love:        '感情婚姻',
-  career:      '事业职业',
-  wealth:      '财富运势',
-  health:      '健康状况',
-  family:      '兄弟合伙',
-  children:    '子女缘分',
-  move:        '迁移外出',
-  friends:     '人际贵人',
-  home:        '田宅不动产',
-  spirit:      '精神福德',
-  parents:     '父母长辈',
+  overview:    'Tổng quan mệnh cách',
+  personality: 'Tính cách',
+  love:        'Tình cảm, hôn nhân',
+  career:      'Sự nghiệp, nghề nghiệp',
+  wealth:      'Tài vận',
+  health:      'Sức khỏe',
+  family:      'Anh em, cộng sự',
+  children:    'Duyên con cái',
+  move:        'Di chuyển, đi xa',
+  friends:     'Quan hệ, quý nhân',
+  home:        'Nhà đất, bất động sản',
+  spirit:      'Tinh thần, phúc đức',
+  parents:     'Cha mẹ, bề trên',
 };
 
 /**

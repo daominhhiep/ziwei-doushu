@@ -10,6 +10,14 @@ const CATEGORY_COLORS: Record<string, string> = {
   '历史': '#facc15',
 };
 
+const CATEGORY_VI: Record<string, string> = {
+  '商业': 'Kinh doanh',
+  '文艺': 'Văn nghệ',
+  '科技': 'Công nghệ',
+  '体育': 'Thể thao',
+  '历史': 'Lịch sử',
+};
+
 export default function FamousPersonCard({ person }: { person: FamousPerson }) {
   const catColor = CATEGORY_COLORS[person.category] ?? '#d4a843';
   return (
@@ -25,25 +33,25 @@ export default function FamousPersonCard({ person }: { person: FamousPerson }) {
     >
       <div className="text-[10px] tracking-widest mb-3 flex items-center gap-2" style={{ color: 'var(--t-faint)' }}>
         <span style={{ color: catColor, opacity: 0.9, fontSize: '12px' }}>★</span>
-        名人命盘
+        Lá số người nổi tiếng
         <span className="text-[9px] px-2 py-0.5 rounded-full ml-auto"
           style={{ color: catColor, background: catColor + '18', border: `1px solid ${catColor}40` }}>
-          {person.category}
+          {CATEGORY_VI[person.category] ?? person.category}
         </span>
       </div>
 
       <div className="space-y-2.5">
         <div className="flex items-baseline gap-3 flex-wrap">
           <span className="text-base font-semibold" style={{ color: 'var(--t-text1)', letterSpacing: '0.02em' }}>
-            {person.name}
+            {person.nameVi}
           </span>
           <span className="text-[11px]" style={{ color: 'var(--t-faint)' }}>
-            {person.year}年 · {person.gender === 'male' ? '男命' : '女命'}
+            Năm {person.year} · {person.gender === 'male' ? 'Nam mệnh' : 'Nữ mệnh'}
           </span>
         </div>
 
         <div className="text-[11px]" style={{ color: 'var(--t-text2)', opacity: 0.85 }}>
-          {person.description}
+          {person.descriptionVi}
         </div>
 
         <div className="text-[11px] leading-relaxed px-3 py-2.5 rounded-md"
@@ -52,12 +60,12 @@ export default function FamousPersonCard({ person }: { person: FamousPerson }) {
             background: catColor + '0c',
             border: `1px solid ${catColor}25`,
           }}>
-          <span style={{ color: catColor, fontWeight: 600, marginRight: '4px' }}>命盘亮点：</span>
-          {person.notable}
+          <span style={{ color: catColor, fontWeight: 600, marginRight: '4px' }}>Điểm nổi bật:</span>
+          {person.notableVi}
         </div>
 
         <div className="text-[10px] mt-2" style={{ color: 'var(--t-faint)', opacity: 0.6, lineHeight: 1.5 }}>
-          ⚠️ 出生时辰为公开文献估算值，仅供研究参考。下方 AI 解读基于此命盘自动生成，与本人无关。
+          ⚠️ Giờ sinh là giá trị ước tính từ tài liệu công khai, chỉ để tham khảo nghiên cứu. Phần luận giải AI bên dưới được tạo tự động từ lá số này và không liên quan đến bản thân người đó.
         </div>
       </div>
     </motion.div>

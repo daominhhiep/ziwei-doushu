@@ -17,6 +17,7 @@
 
 import 'server-only';
 import type { ZiweiChart, Palace, Star, SiHua } from './types';
+import { viTerm } from '../i18n/vi';
 
 // ────────────────── 类型 ──────────────────
 export interface PatternCondition {
@@ -26,7 +27,8 @@ export interface PatternCondition {
 }
 
 export interface Pattern {
-  name: string;
+  id: string;                        // 稳定标识（原中文格局名，测试/逻辑用）
+  name: string;                      // 显示名（越南语）
   level: 'excellent' | 'good' | 'neutral' | 'caution';
   description: string;
   palaces: string[];                 // 涉及宫位
@@ -118,21 +120,22 @@ function detectJunChenQingHui(chart: ZiweiChart, ming: Palace, patterns: Pattern
   const hasYou = sanFangSet.has('右弼');
   if (!hasZuo || !hasYou) return;
 
-  const required = ['紫微入命', '左辅右弼同会三方四正'];
+  const required = ['Tử Vi nhập Mệnh', 'Tả Phù, Hữu Bật đồng hội tam phương tứ chính'];
   const bonus: string[] = [];
   const breaking: string[] = [];
-  if (sanFangSet.has('文昌') || sanFangSet.has('文曲')) bonus.push('再会文昌或文曲');
-  if (sanFangSet.has('天魁') || sanFangSet.has('天钺')) bonus.push('魁钺贵人加照');
-  if (getStarSiHua(ming, '紫微') === '权') bonus.push('紫微化权');
-  if (sanFangShaCount(chart, SHA_KONG) >= 2) breaking.push('地空地劫双夹会照（紫微忌空劫）');
+  if (sanFangSet.has('文昌') || sanFangSet.has('文曲')) bonus.push('Gặp thêm Văn Xương hoặc Văn Khúc');
+  if (sanFangSet.has('天魁') || sanFangSet.has('天钺')) bonus.push('Khôi Việt quý nhân gia chiếu');
+  if (getStarSiHua(ming, '紫微') === '权') bonus.push('Tử Vi Hóa Quyền');
+  if (sanFangShaCount(chart, SHA_KONG) >= 2) breaking.push('Địa Không, Địa Kiếp cùng hội chiếu (Tử Vi kỵ Không Kiếp)');
 
   patterns.push({
-    name: '君臣庆会',
+    id: '君臣庆会',
+    name: 'Quân Thần Khánh Hội',
     level: breaking.length ? 'good' : 'excellent',
-    description: '紫微入命，左辅右弼同会，帝王得贤臣辅佐，主大富大贵、统御之命。一生贵人不绝，宜走政商高位、跨界领袖之途。',
+    description: 'Tử Vi nhập Mệnh, Tả Phù Hữu Bật đồng hội, như đế vương được hiền thần phò tá, chủ mệnh đại phú đại quý, có tài thống lĩnh. Cả đời quý nhân không dứt, hợp đi con đường địa vị cao trong chính trường, thương trường, hoặc làm người dẫn dắt đa lĩnh vực.',
     palaces: ['命宫'],
     conditions: { required, bonus, breaking },
-    source: '《紫微斗数全书·君臣庆会格》',
+    source: '《紫微斗数全书·君臣庆会格》 (Tử Vi Đẩu Số Toàn Thư – Quân Thần Khánh Hội cách)',
   });
 }
 
@@ -144,25 +147,26 @@ function detectZiFu(chart: ZiweiChart, ming: Palace, patterns: Pattern[]) {
 
   const inMing = ziwei.branch === chart.mingGongBranch;
   const required = inMing
-    ? ['紫微天府同入命宫']
-    : ['紫微天府同宫（不在命宫，会照减力）'];
+    ? ['Tử Vi, Thiên Phủ cùng nhập cung Mệnh']
+    : ['Tử Vi, Thiên Phủ đồng cung (không ở cung Mệnh, chỉ hội chiếu nên giảm lực)'];
   const bonus: string[] = [];
   const breaking: string[] = [];
   const sanFangSet = sanFangAllStars(chart);
-  if (sanFangSet.has('左辅') && sanFangSet.has('右弼')) bonus.push('左辅右弼同会');
-  if (sanFangSet.has('文昌') || sanFangSet.has('文曲')) bonus.push('再会昌曲');
-  if (hasShaInPalace(ziwei, SHA_KONG)) breaking.push('紫府宫坐空劫（破紫府之贵气）');
-  if (shaCountInPalace(ziwei, SHA_HARD) >= 2) breaking.push('紫府宫见双煞同坐');
+  if (sanFangSet.has('左辅') && sanFangSet.has('右弼')) bonus.push('Tả Phù, Hữu Bật đồng hội');
+  if (sanFangSet.has('文昌') || sanFangSet.has('文曲')) bonus.push('Gặp thêm Xương Khúc');
+  if (hasShaInPalace(ziwei, SHA_KONG)) breaking.push('Cung Tử Phủ có Không Kiếp tọa thủ (phá quý khí của Tử Phủ)');
+  if (shaCountInPalace(ziwei, SHA_HARD) >= 2) breaking.push('Cung Tử Phủ có hai sát tinh đồng tọa');
 
   patterns.push({
-    name: '紫府同宫',
+    id: '紫府同宫',
+    name: 'Tử Phủ đồng cung',
     level: inMing && !breaking.length ? 'excellent' : 'good',
     description: inMing
-      ? '紫微天府同入命宫，帝相并临，尊贵之命。主品行端正、衣食无忧、有领导才能，宜担任要职。需要左右辅弼来配合方为完整大格。'
-      : '紫微天府同宫但未坐命，主一生有贵人贵气依托，但本身不一定大富贵，需看会照吉煞而定。',
+      ? 'Tử Vi, Thiên Phủ cùng nhập cung Mệnh, đế tinh và tướng tinh cùng giáng, là mệnh tôn quý. Chủ phẩm hạnh đoan chính, cơm áo không lo, có tài lãnh đạo, hợp giữ chức vụ quan trọng. Cần có Tả Phù, Hữu Bật phối hợp mới thành đại cách trọn vẹn.'
+      : 'Tử Vi, Thiên Phủ đồng cung nhưng không tọa Mệnh, chủ cả đời có quý nhân, quý khí để nương tựa, nhưng bản thân chưa chắc đại phú quý, còn tùy cát tinh hay sát tinh hội chiếu.',
     palaces: [ziwei.name],
     conditions: { required, bonus, breaking },
-    source: '《紫微斗数全书·紫府同宫格》',
+    source: '《紫微斗数全书·紫府同宫格》 (Tử Vi Đẩu Số Toàn Thư – Tử Phủ đồng cung cách)',
   });
 }
 
@@ -175,21 +179,22 @@ function detectFuXiangChaoYuan(chart: ZiweiChart, ming: Palace, patterns: Patter
   if (tianfu.branch === chart.mingGongBranch && tianxiang.branch === chart.mingGongBranch) return;
   if (tianfu.branch === tianxiang.branch) return;
 
-  const required = ['天府坐命三方', '天相坐命三方', '两星不同宫'];
+  const required = ['Thiên Phủ tọa tam phương cung Mệnh', 'Thiên Tướng tọa tam phương cung Mệnh', 'Hai sao không đồng cung'];
   const bonus: string[] = [];
   const breaking: string[] = [];
-  if (hasStar(ming, '禄存') || palaceHasSiHua(ming, '禄')) bonus.push('命宫见禄');
-  if (sanFangAllStars(chart).has('左辅')) bonus.push('再会左辅');
-  if (hasShaInPalace(ming, SHA_HARD)) breaking.push('命宫坐煞星');
-  if (sanFangShaCount(chart, SHA_HARD) >= 3) breaking.push('三方四正煞星过多');
+  if (hasStar(ming, '禄存') || palaceHasSiHua(ming, '禄')) bonus.push('Cung Mệnh gặp Lộc');
+  if (sanFangAllStars(chart).has('左辅')) bonus.push('Gặp thêm Tả Phù');
+  if (hasShaInPalace(ming, SHA_HARD)) breaking.push('Cung Mệnh có sát tinh tọa thủ');
+  if (sanFangShaCount(chart, SHA_HARD) >= 3) breaking.push('Tam phương tứ chính có quá nhiều sát tinh');
 
   patterns.push({
-    name: '府相朝垣',
+    id: '府相朝垣',
+    name: 'Phủ Tướng triều viên',
     level: breaking.length ? 'good' : 'excellent',
-    description: '天府天相分守命宫三方四正，文武并济、权印双辉，主一生衣食丰足、地位崇高。古书云"府相朝垣千钟食禄"，常见于政界、企业管理者。',
+    description: 'Thiên Phủ, Thiên Tướng chia nhau giữ tam phương tứ chính cung Mệnh, văn võ hỗ trợ, quyền ấn cùng rạng, chủ cả đời cơm áo đầy đủ, địa vị cao. Sách xưa viết "府相朝垣，千钟食禄" (Phủ Tướng triều viên, hưởng lộc nghìn chung), thường thấy ở người trong chính giới, nhà quản lý doanh nghiệp.',
     palaces: [tianfu.name, tianxiang.name],
     conditions: { required, bonus, breaking },
-    source: '《紫微斗数全书·府相朝垣格》',
+    source: '《紫微斗数全书·府相朝垣格》 (Tử Vi Đẩu Số Toàn Thư – Phủ Tướng triều viên cách)',
   });
 }
 
@@ -202,26 +207,27 @@ function detectYangLiangChangLu(chart: ZiweiChart, ming: Palace, patterns: Patte
   const sun = findStarPalace(chart, '太阳')!;
   const liang = findStarPalace(chart, '天梁')!;
   const required = [
-    '太阳会命宫三方',
-    '天梁会命宫三方',
-    '文昌会命宫三方',
-    '禄存会命宫三方',
+    'Thái Dương hội tam phương cung Mệnh',
+    'Thiên Lương hội tam phương cung Mệnh',
+    'Văn Xương hội tam phương cung Mệnh',
+    'Lộc Tồn hội tam phương cung Mệnh',
   ];
   const bonus: string[] = [];
   const breaking: string[] = [];
-  if (isBright(sun, '太阳')) bonus.push('太阳庙旺');
-  if (isBright(liang, '天梁')) bonus.push('天梁庙旺');
-  if (sanFangHasSiHua(chart, '科')) bonus.push('再会化科');
-  if (isDim(sun, '太阳')) breaking.push('太阳落陷（阳梁失辉）');
-  if (sanFangShaCount(chart, SHA_HARD) >= 2) breaking.push('三方煞重');
+  if (isBright(sun, '太阳')) bonus.push('Thái Dương Miếu Vượng');
+  if (isBright(liang, '天梁')) bonus.push('Thiên Lương Miếu Vượng');
+  if (sanFangHasSiHua(chart, '科')) bonus.push('Gặp thêm Hóa Khoa');
+  if (isDim(sun, '太阳')) breaking.push('Thái Dương hãm địa (Dương Lương mất ánh sáng)');
+  if (sanFangShaCount(chart, SHA_HARD) >= 2) breaking.push('Tam phương sát tinh nặng');
 
   patterns.push({
-    name: '阳梁昌禄',
+    id: '阳梁昌禄',
+    name: 'Dương Lương Xương Lộc',
     level: breaking.length ? 'good' : 'excellent',
-    description: '太阳、天梁、文昌、禄存四星齐会命宫三方，号称"科举之星"，主清贵显达、考运极佳，宜走学术、文教、研究、专业认证之路，一生功名易就。',
+    description: 'Bốn sao Thái Dương, Thiên Lương, Văn Xương, Lộc Tồn cùng hội tam phương cung Mệnh, được gọi là "sao khoa cử", chủ thanh quý hiển đạt, vận thi cử cực tốt, hợp con đường học thuật, giáo dục, nghiên cứu, chứng chỉ chuyên môn; công danh cả đời dễ thành.',
     palaces: [sun.name, liang.name],
     conditions: { required, bonus, breaking },
-    source: '《紫微斗数全书·阳梁昌禄格》',
+    source: '《紫微斗数全书·阳梁昌禄格》 (Tử Vi Đẩu Số Toàn Thư – Dương Lương Xương Lộc cách)',
   });
 }
 
@@ -242,21 +248,22 @@ function detectHuoTanLingTan(chart: ZiweiChart, ming: Palace, patterns: Pattern[
     if (!sameOrTrine) continue;
     if (!isInSanFang(chart, tan.branch)) continue;
 
-    const required = [`贪狼${tan.branch === shaPalace.branch ? '同宫' : '会照'}${shaName}`, '贪狼会照命宫三方'];
+    const required = [`Tham Lang ${tan.branch === shaPalace.branch ? 'đồng cung' : 'hội chiếu'} ${viTerm(shaName)}`, 'Tham Lang hội chiếu tam phương cung Mệnh'];
     const bonus: string[] = [];
     const breaking: string[] = [];
-    if (isBright(tan, '贪狼')) bonus.push('贪狼庙旺');
-    if (getStarSiHua(tan, '贪狼') === '禄' || getStarSiHua(tan, '贪狼') === '权') bonus.push('贪狼化禄/化权');
-    if (hasShaInPalace(tan, ['擎羊', '陀罗'])) breaking.push('贪狼宫又见羊陀（破横发之力）');
-    if (hasShaInPalace(tan, SHA_KONG)) breaking.push('贪狼遇空劫（财来财去）');
+    if (isBright(tan, '贪狼')) bonus.push('Tham Lang Miếu Vượng');
+    if (getStarSiHua(tan, '贪狼') === '禄' || getStarSiHua(tan, '贪狼') === '权') bonus.push('Tham Lang Hóa Lộc/Hóa Quyền');
+    if (hasShaInPalace(tan, ['擎羊', '陀罗'])) breaking.push('Cung Tham Lang lại gặp Kình Đà (phá lực hoạnh phát)');
+    if (hasShaInPalace(tan, SHA_KONG)) breaking.push('Tham Lang gặp Không Kiếp (tiền đến rồi đi)');
 
     patterns.push({
-      name: shaName === '火星' ? '火贪格' : '铃贪格',
+      id: shaName === '火星' ? '火贪格' : '铃贪格',
+      name: shaName === '火星' ? 'Hỏa Tham cách' : 'Linh Tham cách',
       level: breaking.length ? 'good' : 'excellent',
-      description: `贪狼遇${shaName}${tan.branch === shaPalace.branch ? '同宫' : '三方会照'}，主突发横财、突如其来的机遇。古书云“贪狼遇火铃，必发横财”，但来得快去得也快，宜见好就收。${breaking.length ? '本盘破格条件已触发，发力打折。' : ''}`,
+      description: `Tham Lang gặp ${viTerm(shaName)} ${tan.branch === shaPalace.branch ? 'đồng cung' : 'hội chiếu từ tam phương'}, chủ phát tài bất ngờ, cơ hội đến đột ngột. Sách xưa viết “贪狼遇火铃，必发横财” (Tham Lang gặp Hỏa Linh, ắt phát hoạnh tài), nhưng đến nhanh thì đi cũng nhanh, nên biết dừng đúng lúc.${breaking.length ? ' Lá số này đã chạm điều kiện phá cách, sức phát bị giảm.' : ''}`,
       palaces: [tan.name, shaPalace.name],
       conditions: { required, bonus, breaking },
-      source: '《紫微斗数骨髓赋》',
+      source: '《紫微斗数骨髓赋》 (Tử Vi Đẩu Số Cốt Tủy Phú)',
     });
   }
 }
@@ -271,24 +278,25 @@ function detectWuTan(chart: ZiweiChart, ming: Palace, patterns: Pattern[]) {
   if (!isInSanFang(chart, wu.branch) && !isInSanFang(chart, tan.branch)) return;
 
   const required = [
-    wu.branch === tan.branch ? '武曲贪狼同宫（丑/未）' : '武曲贪狼对宫拱照',
-    '会照命宫三方',
+    wu.branch === tan.branch ? 'Vũ Khúc, Tham Lang đồng cung (Sửu/Mùi)' : 'Vũ Khúc, Tham Lang chiếu nhau từ cung đối',
+    'Hội chiếu tam phương cung Mệnh',
   ];
   const bonus: string[] = [];
   const breaking: string[] = [];
   if (sanFangAllStars(chart).has('火星') || sanFangAllStars(chart).has('铃星'))
-    bonus.push('再遇火星/铃星（火贪/铃贪叠加）');
-  if (getStarSiHua(wu, '武曲') === '禄') bonus.push('武曲化禄');
-  if (hasShaInPalace(wu, ['擎羊', '陀罗'])) breaking.push('武贪宫见羊陀');
-  if (hasShaInPalace(wu, SHA_KONG)) breaking.push('武贪宫遇空劫');
+    bonus.push('Gặp thêm Hỏa Tinh/Linh Tinh (chồng thêm Hỏa Tham/Linh Tham)');
+  if (getStarSiHua(wu, '武曲') === '禄') bonus.push('Vũ Khúc Hóa Lộc');
+  if (hasShaInPalace(wu, ['擎羊', '陀罗'])) breaking.push('Cung Vũ Tham gặp Kình Đà');
+  if (hasShaInPalace(wu, SHA_KONG)) breaking.push('Cung Vũ Tham gặp Không Kiếp');
 
   patterns.push({
-    name: '武贪格',
+    id: '武贪格',
+    name: 'Vũ Tham cách',
     level: breaking.length ? 'good' : 'excellent',
-    description: '武曲贪狼会命，财星与桃花欲望星交辉，古书云"武贪不发少年人"——三十岁后方能厚积薄发。主中年以后大富大贵，财源由人脉、应酬、欲望管理而来，适合金融、投机、销售、娱乐业。',
+    description: 'Vũ Khúc, Tham Lang hội Mệnh, tài tinh và sao đào hoa – dục vọng cùng tỏa sáng. Sách xưa viết "武贪不发少年人" (Vũ Tham không phát khi còn trẻ) — sau ba mươi tuổi mới tích lũy dày mà bứt phá. Chủ từ trung niên trở đi đại phú đại quý, nguồn tài đến từ quan hệ, giao tế và biết tiết chế dục vọng; hợp tài chính, đầu cơ, kinh doanh bán hàng, giải trí.',
     palaces: [wu.name, tan.name],
     conditions: { required, bonus, breaking },
-    source: '《紫微斗数骨髓赋》',
+    source: '《紫微斗数骨髓赋》 (Tử Vi Đẩu Số Cốt Tủy Phú)',
   });
 }
 
@@ -298,21 +306,22 @@ function detectShaPoLang(chart: ZiweiChart, ming: Palace, patterns: Pattern[]) {
   const has = ['七杀', '破军', '贪狼'].filter(s => sanFangSet.has(s));
   if (has.length < 3) return;
 
-  const required = ['七杀、破军、贪狼三星齐入命宫三方四正'];
+  const required = ['Ba sao Thất Sát, Phá Quân, Tham Lang cùng vào tam phương tứ chính cung Mệnh'];
   const bonus: string[] = [];
   const breaking: string[] = [];
-  if (sanFangHasSiHua(chart, '禄') || sanFangHasSiHua(chart, '权')) bonus.push('三方有化禄或化权（动得有力）');
-  if (sanFangSet.has('左辅') && sanFangSet.has('右弼')) bonus.push('辅弼同会（变动中得贵人）');
-  if (sanFangShaCount(chart, SHA_HARD) >= 3) breaking.push('煞星过重（动而无成）');
-  if (hasShaInPalace(ming, SHA_KONG)) breaking.push('命坐空劫（动得辛苦）');
+  if (sanFangHasSiHua(chart, '禄') || sanFangHasSiHua(chart, '权')) bonus.push('Tam phương có Hóa Lộc hoặc Hóa Quyền (động mà có lực)');
+  if (sanFangSet.has('左辅') && sanFangSet.has('右弼')) bonus.push('Tả Hữu đồng hội (trong biến động gặp quý nhân)');
+  if (sanFangShaCount(chart, SHA_HARD) >= 3) breaking.push('Sát tinh quá nặng (động mà không thành)');
+  if (hasShaInPalace(ming, SHA_KONG)) breaking.push('Mệnh có Không Kiếp tọa thủ (động mà vất vả)');
 
   patterns.push({
-    name: '杀破狼',
+    id: '杀破狼',
+    name: 'Sát Phá Tham',
     level: breaking.length ? 'caution' : 'good',
-    description: '七杀、破军、贪狼三星会命，开创闯荡之命格。一生变动多、不甘平凡，宜创业、军警、业务、销售。中年后才能稳定守成，年轻时易因冲动失利。',
+    description: 'Ba sao Thất Sát, Phá Quân, Tham Lang hội Mệnh, là mệnh cách khai sáng, xông pha. Cả đời nhiều biến động, không cam chịu tầm thường, hợp khởi nghiệp, quân đội – công an, kinh doanh, bán hàng. Sau trung niên mới ổn định giữ thành, lúc trẻ dễ thất bại vì bốc đồng.',
     palaces: getSanFangPalaces(chart).filter(p => has.includes(getMajorStarNames(p)[0])).map(p => p.name),
     conditions: { required, bonus, breaking },
-    source: '《紫微斗数全书·杀破狼》',
+    source: '《紫微斗数全书·杀破狼》 (Tử Vi Đẩu Số Toàn Thư – Sát Phá Tham)',
   });
 }
 
@@ -322,21 +331,22 @@ function detectJiYueTongLiang(chart: ZiweiChart, ming: Palace, patterns: Pattern
   const has = ['天机', '太阴', '天同', '天梁'].filter(s => sanFangSet.has(s));
   if (has.length < 4) return;
 
-  const required = ['天机、太阴、天同、天梁四星齐入命宫三方四正'];
+  const required = ['Bốn sao Thiên Cơ, Thái Âm, Thiên Đồng, Thiên Lương cùng vào tam phương tứ chính cung Mệnh'];
   const bonus: string[] = [];
   const breaking: string[] = [];
-  if (sanFangSet.has('文昌') || sanFangSet.has('文曲')) bonus.push('再会昌曲');
-  if (sanFangHasSiHua(chart, '科')) bonus.push('再会化科');
-  if (sanFangShaCount(chart, SHA_HARD) >= 3) breaking.push('煞星过多（机月同梁忌煞）');
-  if (hasShaInPalace(ming, SHA_HARD)) breaking.push('命宫坐煞');
+  if (sanFangSet.has('文昌') || sanFangSet.has('文曲')) bonus.push('Gặp thêm Xương Khúc');
+  if (sanFangHasSiHua(chart, '科')) bonus.push('Gặp thêm Hóa Khoa');
+  if (sanFangShaCount(chart, SHA_HARD) >= 3) breaking.push('Quá nhiều sát tinh (Cơ Nguyệt Đồng Lương kỵ sát)');
+  if (hasShaInPalace(ming, SHA_HARD)) breaking.push('Cung Mệnh có sát tinh tọa thủ');
 
   patterns.push({
-    name: '机月同梁',
+    id: '机月同梁',
+    name: 'Cơ Nguyệt Đồng Lương',
     level: breaking.length ? 'good' : 'excellent',
-    description: '天机太阴天同天梁四星齐入命迁财官，文质彬彬、聪慧善谋。最适合公职、学术、文艺、医疗、服务等需稳定累积的行业，不宜大冒险大投机。',
+    description: 'Bốn sao Thiên Cơ, Thái Âm, Thiên Đồng, Thiên Lương cùng vào Mệnh, Thiên Di, Tài Bạch, Quan Lộc; nho nhã lịch thiệp, thông minh giỏi mưu tính. Hợp nhất với công chức, học thuật, văn nghệ, y tế, dịch vụ… những ngành cần tích lũy ổn định, không nên mạo hiểm hay đầu cơ lớn.',
     palaces: getSanFangPalaces(chart).filter(p => has.some(s => getMajorStarNames(p).includes(s))).map(p => p.name),
     conditions: { required, bonus, breaking },
-    source: '《紫微斗数全书·机月同梁格》',
+    source: '《紫微斗数全书·机月同梁格》 (Tử Vi Đẩu Số Toàn Thư – Cơ Nguyệt Đồng Lương cách)',
   });
 }
 
@@ -347,21 +357,22 @@ function detectLianXiang(chart: ZiweiChart, patterns: Pattern[]) {
   if (!lian || !xiang || lian.branch !== xiang.branch) return;
 
   const inMing = lian.branch === chart.mingGongBranch;
-  const required = ['廉贞天相同宫'];
+  const required = ['Liêm Trinh, Thiên Tướng đồng cung'];
   const bonus: string[] = [];
   const breaking: string[] = [];
-  if (hasStar(lian, '禄存') || getStarSiHua(lian, '廉贞') === '禄') bonus.push('见禄存或廉贞化禄');
-  if (sanFangAllStars(chart).has('左辅')) bonus.push('左辅会照');
-  if (hasShaInPalace(lian, ['擎羊'])) breaking.push('廉相宫坐擎羊（廉杀羊倾向）');
-  if (getStarSiHua(lian, '廉贞') === '忌') breaking.push('廉贞化忌');
+  if (hasStar(lian, '禄存') || getStarSiHua(lian, '廉贞') === '禄') bonus.push('Gặp Lộc Tồn hoặc Liêm Trinh Hóa Lộc');
+  if (sanFangAllStars(chart).has('左辅')) bonus.push('Tả Phù hội chiếu');
+  if (hasShaInPalace(lian, ['擎羊'])) breaking.push('Cung Liêm Tướng có Kình Dương tọa thủ (khuynh hướng Liêm Sát Dương)');
+  if (getStarSiHua(lian, '廉贞') === '忌') breaking.push('Liêm Trinh Hóa Kỵ');
 
   patterns.push({
-    name: '廉贞天相格',
+    id: '廉贞天相格',
+    name: 'Liêm Trinh Thiên Tướng cách',
     level: breaking.length ? 'caution' : (inMing ? 'good' : 'neutral'),
-    description: '廉贞天相同宫，印绶格局，主秉公处事、清廉之名，宜任公职、行政管理、法务、企划。怕见擎羊化忌，则反主官非。',
+    description: 'Liêm Trinh, Thiên Tướng đồng cung, là cách cục ấn thụ, chủ làm việc công minh, có tiếng thanh liêm, hợp công chức, quản lý hành chính, pháp chế, hoạch định. Sợ gặp Kình Dương, Hóa Kỵ, khi đó lại chủ kiện tụng.',
     palaces: [lian.name],
     conditions: { required, bonus, breaking },
-    source: '《紫微斗数全书》',
+    source: '《紫微斗数全书》 (Tử Vi Đẩu Số Toàn Thư)',
   });
 }
 
@@ -372,21 +383,22 @@ function detectWuQiSha(chart: ZiweiChart, patterns: Pattern[]) {
   if (!wu || !qi || wu.branch !== qi.branch) return;
 
   const inMing = wu.branch === chart.mingGongBranch;
-  const required = ['武曲七杀同宫'];
+  const required = ['Vũ Khúc, Thất Sát đồng cung'];
   const bonus: string[] = [];
   const breaking: string[] = [];
-  if (getStarSiHua(wu, '武曲') === '权') bonus.push('武曲化权');
-  if (getStarSiHua(wu, '武曲') === '禄') bonus.push('武曲化禄');
-  if (getStarSiHua(wu, '武曲') === '忌') breaking.push('武曲化忌（武曲化忌为财劫之兆）');
-  if (hasShaInPalace(wu, ['擎羊', '陀罗', '火星', '铃星'])) breaking.push('武杀宫煞星过多');
+  if (getStarSiHua(wu, '武曲') === '权') bonus.push('Vũ Khúc Hóa Quyền');
+  if (getStarSiHua(wu, '武曲') === '禄') bonus.push('Vũ Khúc Hóa Lộc');
+  if (getStarSiHua(wu, '武曲') === '忌') breaking.push('Vũ Khúc Hóa Kỵ (điềm báo kiếp tài, hao tài)');
+  if (hasShaInPalace(wu, ['擎羊', '陀罗', '火星', '铃星'])) breaking.push('Cung Vũ Sát có quá nhiều sát tinh');
 
   patterns.push({
-    name: '武曲七杀',
+    id: '武曲七杀',
+    name: 'Vũ Khúc Thất Sát',
     level: breaking.length ? 'caution' : (inMing ? 'excellent' : 'good'),
-    description: '武曲七杀同宫，将星配财星，主果决刚毅、理财能力强，适合金融、军警、创业。但忌见化忌煞星，否则凶险。一生奋斗、积财但操心。',
+    description: 'Vũ Khúc, Thất Sát đồng cung, tướng tinh phối tài tinh, chủ quả quyết cương nghị, giỏi quản lý tiền bạc, hợp tài chính, quân đội – công an, khởi nghiệp. Nhưng kỵ gặp Hóa Kỵ và sát tinh, nếu không sẽ hung hiểm. Cả đời phấn đấu, tích được của nhưng nhiều lo toan.',
     palaces: [wu.name],
     conditions: { required, bonus, breaking },
-    source: '《紫微斗数全书》',
+    source: '《紫微斗数全书》 (Tử Vi Đẩu Số Toàn Thư)',
   });
 }
 
@@ -396,20 +408,21 @@ function detectTongLiang(chart: ZiweiChart, patterns: Pattern[]) {
   const liang = findStarPalace(chart, '天梁');
   if (!tong || !liang || tong.branch !== liang.branch) return;
 
-  const required = ['天同天梁同宫'];
+  const required = ['Thiên Đồng, Thiên Lương đồng cung'];
   const bonus: string[] = [];
   const breaking: string[] = [];
-  if (sanFangAllStars(chart).has('文昌')) bonus.push('文昌会照');
-  if (getStarSiHua(tong, '天同') === '禄') bonus.push('天同化禄');
-  if (hasShaInPalace(tong, SHA_HARD)) breaking.push('煞星同坐');
+  if (sanFangAllStars(chart).has('文昌')) bonus.push('Văn Xương hội chiếu');
+  if (getStarSiHua(tong, '天同') === '禄') bonus.push('Thiên Đồng Hóa Lộc');
+  if (hasShaInPalace(tong, SHA_HARD)) breaking.push('Có sát tinh đồng tọa');
 
   patterns.push({
-    name: '天同天梁格',
+    id: '天同天梁格',
+    name: 'Thiên Đồng Thiên Lương cách',
     level: breaking.length ? 'neutral' : 'good',
-    description: '天同天梁同宫，福星与荫星共会，主宽厚和善、乐于助人，宜医疗、教育、宗教、社会公益。但偏温和保守，难成大富大贵之局。',
+    description: 'Thiên Đồng, Thiên Lương đồng cung, phúc tinh và ấm tinh cùng hội, chủ khoan hậu hiền hòa, vui lòng giúp người, hợp y tế, giáo dục, tôn giáo, công ích xã hội. Nhưng thiên về ôn hòa bảo thủ, khó thành cục đại phú đại quý.',
     palaces: [tong.name],
     conditions: { required, bonus, breaking },
-    source: '《紫微斗数全书》',
+    source: '《紫微斗数全书》 (Tử Vi Đẩu Số Toàn Thư)',
   });
 }
 
@@ -421,20 +434,21 @@ function detectRiYueTongGong(chart: ZiweiChart, patterns: Pattern[]) {
   if (sun.branch !== 1 && sun.branch !== 7) return;  // 必须丑(1) 或 未(7)
 
   const inMing = sun.branch === chart.mingGongBranch;
-  const required = [`太阳太阴同入${BRANCH_NAMES[sun.branch]}宫`];
+  const required = [`Thái Dương, Thái Âm cùng nhập cung ${viTerm(BRANCH_NAMES[sun.branch])}`];
   const bonus: string[] = [];
   const breaking: string[] = [];
-  if (sun.branch === 7) bonus.push('未宫日月同辉（古书云未宫日月双美）');
-  if (sanFangAllStars(chart).has('文昌') && sanFangAllStars(chart).has('文曲')) bonus.push('昌曲会照');
-  if (hasShaInPalace(sun, SHA_HARD)) breaking.push('日月宫煞星同坐');
+  if (sun.branch === 7) bonus.push('Nhật Nguyệt cùng sáng tại Mùi (sách xưa nói Nhật Nguyệt ở Mùi đều đẹp)');
+  if (sanFangAllStars(chart).has('文昌') && sanFangAllStars(chart).has('文曲')) bonus.push('Xương Khúc hội chiếu');
+  if (hasShaInPalace(sun, SHA_HARD)) breaking.push('Cung Nhật Nguyệt có sát tinh đồng tọa');
 
   patterns.push({
-    name: '日月同宫',
+    id: '日月同宫',
+    name: 'Nhật Nguyệt đồng cung',
     level: breaking.length ? 'good' : (inMing ? 'excellent' : 'good'),
-    description: `太阳太阴于${BRANCH_NAMES[sun.branch]}宫同宫，阴阳平衡，文武兼备。主异性缘佳、事业顺遂、名声远播。${sun.branch === 7 ? '未宫日月双美尤佳。' : '丑宫日月同宫力量较平。'}`,
+    description: `Thái Dương, Thái Âm đồng cung tại ${viTerm(BRANCH_NAMES[sun.branch])}, âm dương cân bằng, văn võ song toàn. Chủ duyên với người khác giới tốt, sự nghiệp thuận lợi, danh tiếng vang xa. ${sun.branch === 7 ? 'Nhật Nguyệt ở Mùi đều đẹp, càng tốt.' : 'Nhật Nguyệt đồng cung ở Sửu thì lực khá bình thường.'}`,
     palaces: [sun.name],
     conditions: { required, bonus, breaking },
-    source: '《紫微斗数全书》',
+    source: '《紫微斗数全书》 (Tử Vi Đẩu Số Toàn Thư)',
   });
 }
 
@@ -451,20 +465,21 @@ function detectRiYueJiaMing(chart: ZiweiChart, patterns: Pattern[]) {
 
   const sunPalace = prevHasSun ? prev : next;
   const moonPalace = prevHasMoon ? prev : next;
-  const required = ['太阳太阴分居命宫前后两宫'];
+  const required = ['Thái Dương, Thái Âm ở hai cung trước và sau cung Mệnh'];
   const bonus: string[] = [];
   const breaking: string[] = [];
-  if (isBright(sunPalace, '太阳')) bonus.push('太阳庙旺');
-  if (isBright(moonPalace, '太阴')) bonus.push('太阴庙旺');
-  if (isDim(sunPalace, '太阳') || isDim(moonPalace, '太阴')) breaking.push('日月落陷（夹命无光）');
+  if (isBright(sunPalace, '太阳')) bonus.push('Thái Dương Miếu Vượng');
+  if (isBright(moonPalace, '太阴')) bonus.push('Thái Âm Miếu Vượng');
+  if (isDim(sunPalace, '太阳') || isDim(moonPalace, '太阴')) breaking.push('Nhật Nguyệt hãm địa (giáp Mệnh mà không có ánh sáng)');
 
   patterns.push({
-    name: '日月夹命',
+    id: '日月夹命',
+    name: 'Nhật Nguyệt giáp Mệnh',
     level: breaking.length ? 'good' : 'excellent',
-    description: '太阳太阴分居命宫两侧夹照，光明磊落，一生贵人相助，事业蓬勃。男主官贵，女主旺夫兴家。日月须不落陷方为真夹。',
+    description: 'Thái Dương, Thái Âm ở hai bên cung Mệnh giáp chiếu, quang minh lỗi lạc, cả đời có quý nhân giúp đỡ, sự nghiệp phát triển mạnh. Nam chủ quan quý, nữ chủ vượng phu hưng gia. Nhật Nguyệt phải không hãm địa mới là chân giáp.',
     palaces: [sunPalace.name, moonPalace.name],
     conditions: { required, bonus, breaking },
-    source: '《紫微斗数全书·日月夹命》',
+    source: '《紫微斗数全书·日月夹命》 (Tử Vi Đẩu Số Toàn Thư – Nhật Nguyệt giáp Mệnh)',
   });
 }
 
@@ -476,21 +491,22 @@ function detectJuRiTongGong(chart: ZiweiChart, patterns: Pattern[]) {
   if (ju.branch !== 2 && ju.branch !== 8) return;  // 必须寅(2) 或 申(8)
 
   const inMing = ju.branch === chart.mingGongBranch;
-  const required = [`巨门太阳同入${BRANCH_NAMES[ju.branch]}宫`];
+  const required = [`Cự Môn, Thái Dương cùng nhập cung ${viTerm(BRANCH_NAMES[ju.branch])}`];
   const bonus: string[] = [];
   const breaking: string[] = [];
-  if (ju.branch === 2) bonus.push('寅宫太阳庙旺，巨门得日光化解是非');
-  if (getStarSiHua(ju, '巨门') === '禄' || getStarSiHua(ju, '巨门') === '权') bonus.push('巨门化禄/化权（口才生财）');
-  if (getStarSiHua(ju, '巨门') === '忌') breaking.push('巨门化忌（口舌官非）');
-  if (ju.branch === 8) breaking.push('申宫太阳偏西，巨门暗曜更显');
+  if (ju.branch === 2) bonus.push('Thái Dương Miếu Vượng tại Dần, Cự Môn được ánh dương hóa giải thị phi');
+  if (getStarSiHua(ju, '巨门') === '禄' || getStarSiHua(ju, '巨门') === '权') bonus.push('Cự Môn Hóa Lộc/Hóa Quyền (nhờ tài ăn nói mà sinh tài)');
+  if (getStarSiHua(ju, '巨门') === '忌') breaking.push('Cự Môn Hóa Kỵ (khẩu thiệt, kiện tụng)');
+  if (ju.branch === 8) breaking.push('Tại Thân, Thái Dương đã ngả về tây, ám tinh Cự Môn càng lộ rõ');
 
   patterns.push({
-    name: '巨日同宫',
+    id: '巨日同宫',
+    name: 'Cự Nhật đồng cung',
     level: breaking.length ? 'caution' : (inMing && ju.branch === 2 ? 'excellent' : 'good'),
-    description: `巨门太阳同${BRANCH_NAMES[ju.branch]}宫，太阳化解巨门暗曜，主以口才、传媒、外语、专业立业。寅宫为佳，申宫力减。怕巨门化忌则官非。`,
+    description: `Cự Môn, Thái Dương đồng cung tại ${viTerm(BRANCH_NAMES[ju.branch])}, Thái Dương hóa giải ám tinh Cự Môn, chủ lập nghiệp nhờ tài ăn nói, truyền thông, ngoại ngữ, chuyên môn. Ở Dần là tốt, ở Thân lực giảm. Sợ Cự Môn Hóa Kỵ thì vướng kiện tụng.`,
     palaces: [ju.name],
     conditions: { required, bonus, breaking },
-    source: '《紫微斗数全书·巨日同宫》',
+    source: '《紫微斗数全书·巨日同宫》 (Tử Vi Đẩu Số Toàn Thư – Cự Nhật đồng cung)',
   });
 }
 
@@ -499,21 +515,22 @@ function detectShiZhongYinYu(chart: ZiweiChart, ming: Palace, patterns: Pattern[
   if (!hasStar(ming, '巨门')) return;
   if (ming.branch !== 0 && ming.branch !== 6) return;  // 子(0) 或 午(6)
 
-  const required = [`巨门入命于${BRANCH_NAMES[ming.branch]}宫`];
+  const required = [`Cự Môn nhập Mệnh tại cung ${viTerm(BRANCH_NAMES[ming.branch])}`];
   const bonus: string[] = [];
   const breaking: string[] = [];
-  if (getStarSiHua(ming, '巨门') === '禄' || getStarSiHua(ming, '巨门') === '权') bonus.push('巨门化禄/化权');
-  if (sanFangAllStars(chart).has('文昌')) bonus.push('文昌会照（石中隐玉得明）');
-  if (getStarSiHua(ming, '巨门') === '忌') breaking.push('巨门化忌（玉藏深泥）');
-  if (hasShaInPalace(ming, SHA_HARD)) breaking.push('命坐煞星');
+  if (getStarSiHua(ming, '巨门') === '禄' || getStarSiHua(ming, '巨门') === '权') bonus.push('Cự Môn Hóa Lộc/Hóa Quyền');
+  if (sanFangAllStars(chart).has('文昌')) bonus.push('Văn Xương hội chiếu (ngọc trong đá được soi sáng)');
+  if (getStarSiHua(ming, '巨门') === '忌') breaking.push('Cự Môn Hóa Kỵ (ngọc vùi sâu trong bùn)');
+  if (hasShaInPalace(ming, SHA_HARD)) breaking.push('Mệnh có sát tinh tọa thủ');
 
   patterns.push({
-    name: '石中隐玉',
+    id: '石中隐玉',
+    name: 'Thạch trung ẩn ngọc',
     level: breaking.length ? 'caution' : 'excellent',
-    description: '巨门坐命子午，外表平凡而内蕴才学。早年默默无闻、中年方显贵气，宜走专业、研究、口才、传媒。需有禄权或文昌相助方能"凿石见玉"。',
+    description: 'Cự Môn tọa Mệnh tại Tý hoặc Ngọ, bề ngoài bình thường mà bên trong ẩn chứa tài học. Thời trẻ âm thầm không tiếng tăm, đến trung niên mới lộ quý khí; hợp con đường chuyên môn, nghiên cứu, ăn nói, truyền thông. Cần có Lộc, Quyền hoặc Văn Xương trợ giúp mới "đục đá thấy ngọc".',
     palaces: ['命宫'],
     conditions: { required, bonus, breaking },
-    source: '《紫微斗数骨髓赋·石中隐玉》',
+    source: '《紫微斗数骨髓赋·石中隐玉》 (Tử Vi Đẩu Số Cốt Tủy Phú – Thạch trung ẩn ngọc)',
   });
 }
 
@@ -525,20 +542,21 @@ function detectMingZhuChuHai(chart: ZiweiChart, ming: Palace, patterns: Pattern[
   if (!dui) return;
   if (!hasStar(dui, '太阳') || !hasStar(dui, '太阴')) return;
 
-  const required = ['命宫在未为空宫', '对宫丑宫为太阳太阴同度'];
+  const required = ['Cung Mệnh tại Mùi, vô chính diệu', 'Cung đối (Sửu) có Thái Dương, Thái Âm đồng độ'];
   const bonus: string[] = [];
   const breaking: string[] = [];
-  if (sanFangAllStars(chart).has('文昌') || sanFangAllStars(chart).has('文曲')) bonus.push('再会昌曲');
-  if (sanFangAllStars(chart).has('左辅') || sanFangAllStars(chart).has('右弼')) bonus.push('辅弼相助');
-  if (sanFangShaCount(chart, SHA_HARD) >= 2) breaking.push('煞星会照（珠光黯淡）');
+  if (sanFangAllStars(chart).has('文昌') || sanFangAllStars(chart).has('文曲')) bonus.push('Gặp thêm Xương Khúc');
+  if (sanFangAllStars(chart).has('左辅') || sanFangAllStars(chart).has('右弼')) bonus.push('Tả Hữu tương trợ');
+  if (sanFangShaCount(chart, SHA_HARD) >= 2) breaking.push('Sát tinh hội chiếu (ánh ngọc lu mờ)');
 
   patterns.push({
-    name: '明珠出海',
+    id: '明珠出海',
+    name: 'Minh châu xuất hải',
     level: breaking.length ? 'good' : 'excellent',
-    description: '命未空宫，对宫丑宫日月同辉拱照，号"明珠出海"。主出生平凡、后天努力出头，宜远赴他乡、学术研究或大公司高位，主大富大贵。',
+    description: 'Mệnh tại Mùi vô chính diệu, cung đối Sửu có Nhật Nguyệt cùng sáng chiếu về, gọi là "Minh châu xuất hải" (ngọc sáng ra biển). Chủ xuất thân bình thường, nhờ nỗ lực về sau mà nổi bật; hợp đi xa lập nghiệp nơi đất khách, nghiên cứu học thuật hoặc vị trí cao ở công ty lớn, chủ đại phú đại quý.',
     palaces: ['命宫', dui.name],
     conditions: { required, bonus, breaking },
-    source: '《紫微斗数全集·明珠出海》',
+    source: '《紫微斗数全集·明珠出海》 (Tử Vi Đẩu Số Toàn Tập – Minh châu xuất hải)',
   });
 }
 
@@ -546,22 +564,23 @@ function detectMingZhuChuHai(chart: ZiweiChart, ming: Palace, patterns: Pattern[
 function detectZiWeiInMing(chart: ZiweiChart, ming: Palace, patterns: Pattern[]) {
   if (!hasStar(ming, '紫微') || hasStar(ming, '天府')) return;
 
-  const required = ['紫微独坐命宫（无天府同坐）'];
+  const required = ['Tử Vi độc tọa cung Mệnh (không có Thiên Phủ đồng tọa)'];
   const bonus: string[] = [];
   const breaking: string[] = [];
   const sanFangSet = sanFangAllStars(chart);
-  if (sanFangSet.has('左辅') && sanFangSet.has('右弼')) bonus.push('左辅右弼同会');
-  if (sanFangSet.has('文昌') && sanFangSet.has('文曲')) bonus.push('文昌文曲同会');
-  if (!sanFangSet.has('左辅') && !sanFangSet.has('右弼')) breaking.push('无辅弼（孤君无臣）');
-  if (hasShaInPalace(ming, SHA_KONG)) breaking.push('紫微遇空劫（古书最忌）');
+  if (sanFangSet.has('左辅') && sanFangSet.has('右弼')) bonus.push('Tả Phù, Hữu Bật đồng hội');
+  if (sanFangSet.has('文昌') && sanFangSet.has('文曲')) bonus.push('Văn Xương, Văn Khúc đồng hội');
+  if (!sanFangSet.has('左辅') && !sanFangSet.has('右弼')) breaking.push('Không có Tả Hữu (vua cô độc không bề tôi)');
+  if (hasShaInPalace(ming, SHA_KONG)) breaking.push('Tử Vi gặp Không Kiếp (sách xưa kỵ nhất)');
 
   patterns.push({
-    name: '紫微入命',
+    id: '紫微入命',
+    name: 'Tử Vi nhập Mệnh',
     level: breaking.length ? 'caution' : (bonus.length ? 'excellent' : 'good'),
-    description: '紫微独坐命宫，帝王之星，自尊心强、有领导魅力。但紫微最忌"在野孤君"——若无左右辅弼相会，反成孤高自傲、易招毁谤。',
+    description: 'Tử Vi độc tọa cung Mệnh, là sao đế vương, lòng tự tôn cao, có sức hút lãnh đạo. Nhưng Tử Vi kỵ nhất cảnh "在野孤君" (vua cô độc nơi đồng nội) — nếu không có Tả Phù, Hữu Bật hội về thì lại thành cô cao tự phụ, dễ chuốc lời gièm pha.',
     palaces: ['命宫'],
     conditions: { required, bonus, breaking },
-    source: '《紫微斗数全书》',
+    source: '《紫微斗数全书》 (Tử Vi Đẩu Số Toàn Thư)',
   });
 }
 
@@ -575,18 +594,19 @@ function detectFuBiJiaMing(chart: ZiweiChart, patterns: Pattern[]) {
   const nextHasYou = hasStar(next, '右弼');
   if (!((prevHasZuo && nextHasYou) || (prevHasYou && nextHasZuo))) return;
 
-  const required = ['左辅右弼分居命宫前后两宫'];
+  const required = ['Tả Phù, Hữu Bật ở hai cung trước và sau cung Mệnh'];
   const bonus: string[] = [];
   const breaking: string[] = [];
-  if (sanFangAllStars(chart).has('天魁') || sanFangAllStars(chart).has('天钺')) bonus.push('再会魁钺');
+  if (sanFangAllStars(chart).has('天魁') || sanFangAllStars(chart).has('天钺')) bonus.push('Gặp thêm Khôi Việt');
 
   patterns.push({
-    name: '辅弼夹命',
+    id: '辅弼夹命',
+    name: 'Tả Hữu giáp Mệnh',
     level: 'excellent',
-    description: '左辅右弼夹命，传统论述认为此格象征贵人相助与福厚特质。适合走仕途、大企业管理等能发挥组织才能的方向。古书云"左辅右弼，终身福厚"——强调此格在组织协调中的优势。',
+    description: 'Tả Phù, Hữu Bật giáp Mệnh; luận thuật truyền thống cho rằng cách này tượng trưng cho quý nhân trợ giúp và phúc dày. Hợp con đường quan trường, quản lý doanh nghiệp lớn… những hướng phát huy được tài tổ chức. Sách xưa viết "左辅右弼，终身福厚" (Tả Phù Hữu Bật, trọn đời phúc dày) — nhấn mạnh ưu thế của cách này trong tổ chức, điều phối.',
     palaces: ['命宫', prev.name, next.name],
     conditions: { required, bonus, breaking },
-    source: '《紫微斗数全书·辅弼夹命》',
+    source: '《紫微斗数全书·辅弼夹命》 (Tử Vi Đẩu Số Toàn Thư – Tả Hữu giáp Mệnh)',
   });
 }
 
@@ -601,12 +621,13 @@ function detectChangQuJiaMing(chart: ZiweiChart, patterns: Pattern[]) {
   if (!((prevHasChang && nextHasQu) || (prevHasQu && nextHasChang))) return;
 
   patterns.push({
-    name: '昌曲夹命',
+    id: '昌曲夹命',
+    name: 'Xương Khúc giáp Mệnh',
     level: 'excellent',
-    description: '文昌文曲夹命宫，主聪明俊秀、文采斐然，宜走文教、学术、艺术、写作。古书云"昌曲夹命主科甲"，最利考运。',
+    description: 'Văn Xương, Văn Khúc giáp cung Mệnh, chủ thông minh tuấn tú, văn chương xuất sắc, hợp giáo dục, học thuật, nghệ thuật, viết lách. Sách xưa viết "昌曲夹命主科甲" (Xương Khúc giáp Mệnh chủ đỗ đạt khoa bảng), lợi nhất cho vận thi cử.',
     palaces: ['命宫', prev.name, next.name],
-    conditions: { required: ['文昌文曲分居命宫前后两宫'] },
-    source: '《紫微斗数全书》',
+    conditions: { required: ['Văn Xương, Văn Khúc ở hai cung trước và sau cung Mệnh'] },
+    source: '《紫微斗数全书》 (Tử Vi Đẩu Số Toàn Thư)',
   });
 }
 
@@ -619,12 +640,13 @@ function detectKuiYueJiaMing(chart: ZiweiChart, patterns: Pattern[]) {
   if (!okA && !okB) return;
 
   patterns.push({
-    name: '魁钺夹命',
+    id: '魁钺夹命',
+    name: 'Khôi Việt giáp Mệnh',
     level: 'good',
-    description: '天魁天钺夹命，男称天乙、女称玉堂，一生贵人提携。考试、求职、关键时刻常有意外贵人相助。',
+    description: 'Thiên Khôi, Thiên Việt giáp Mệnh, nam gọi là Thiên Ất, nữ gọi là Ngọc Đường, cả đời có quý nhân nâng đỡ. Khi thi cử, tìm việc, vào thời khắc then chốt thường có quý nhân bất ngờ giúp đỡ.',
     palaces: ['命宫', prev.name, next.name],
-    conditions: { required: ['天魁天钺分居命宫前后两宫'] },
-    source: '《紫微斗数全书》',
+    conditions: { required: ['Thiên Khôi, Thiên Việt ở hai cung trước và sau cung Mệnh'] },
+    source: '《紫微斗数全书》 (Tử Vi Đẩu Số Toàn Thư)',
   });
 }
 
@@ -640,15 +662,16 @@ function detectShuangLuChaoYuan(chart: ZiweiChart, ming: Palace, patterns: Patte
   if (!huaLuFound || !luCunFound) return;
 
   patterns.push({
-    name: '双禄朝垣',
+    id: '双禄朝垣',
+    name: 'Song Lộc triều viên',
     level: 'excellent',
-    description: '化禄、禄存同会命宫三方四正，财源涌动、衣食丰足。古书云"双禄朝垣，富比陶朱"，主一生不愁财，多有正财横财兼得。',
+    description: 'Hóa Lộc, Lộc Tồn cùng hội tam phương tứ chính cung Mệnh, nguồn tài dồi dào, cơm áo đầy đủ. Sách xưa viết "双禄朝垣，富比陶朱" (Song Lộc triều viên, giàu sánh Đào Chu), chủ cả đời không lo tiền bạc, thường có cả chính tài lẫn hoạnh tài.',
     palaces: sanFang.map(p => p.name),
     conditions: {
-      required: ['化禄会照三方四正', '禄存会照三方四正'],
-      breaking: hasShaInPalace(ming, SHA_KONG) ? ['命坐空劫（双禄遇空，财来财去）'] : undefined,
+      required: ['Hóa Lộc hội chiếu tam phương tứ chính', 'Lộc Tồn hội chiếu tam phương tứ chính'],
+      breaking: hasShaInPalace(ming, SHA_KONG) ? ['Mệnh có Không Kiếp tọa thủ (Song Lộc gặp Không, tiền đến rồi đi)'] : undefined,
     },
-    source: '《紫微斗数全书·双禄朝垣》',
+    source: '《紫微斗数全书·双禄朝垣》 (Tử Vi Đẩu Số Toàn Thư – Song Lộc triều viên)',
   });
 }
 
@@ -666,12 +689,13 @@ function detectSanQiJiaHui(chart: ZiweiChart, patterns: Pattern[]) {
   if (!(lu && quan && ke)) return;
 
   patterns.push({
-    name: '三奇加会',
+    id: '三奇加会',
+    name: 'Tam Kỳ gia hội',
     level: 'excellent',
-    description: '化禄、化权、化科三吉化齐会命宫三方四正，号称"三奇加会"。主一生功名、财富、贵人三全，是紫微斗数最高吉格之一。',
+    description: 'Ba cát hóa Hóa Lộc, Hóa Quyền, Hóa Khoa cùng hội tam phương tứ chính cung Mệnh, gọi là "Tam Kỳ gia hội". Chủ cả đời công danh, tiền tài, quý nhân đều đủ cả ba, là một trong những cát cách cao nhất của Tử Vi Đẩu Số.',
     palaces: sanFangPalaces.map(p => p.name),
-    conditions: { required: ['化禄、化权、化科三吉化齐会命宫三方四正'] },
-    source: '《紫微斗数全书·三奇加会》',
+    conditions: { required: ['Ba cát hóa Hóa Lộc, Hóa Quyền, Hóa Khoa cùng hội tam phương tứ chính cung Mệnh'] },
+    source: '《紫微斗数全书·三奇加会》 (Tử Vi Đẩu Số Toàn Thư – Tam Kỳ gia hội)',
   });
 }
 
@@ -681,12 +705,13 @@ function detectHuaLuRuMing(chart: ZiweiChart, ming: Palace, patterns: Pattern[])
   if (!huaLuStar) return;
 
   patterns.push({
-    name: `${huaLuStar.name}化禄入命`,
+    id: `${huaLuStar.name}化禄入命`,
+    name: `${viTerm(huaLuStar.name)} Hóa Lộc nhập Mệnh`,
     level: 'good',
-    description: `${huaLuStar.name}化禄坐命，主生财顺利、人缘佳、机缘多。${huaLuStar.name === '武曲' ? '武曲化禄属正财，宜实业、金融。' : huaLuStar.name === '太阴' ? '太阴化禄属阴财、不动产。' : huaLuStar.name === '贪狼' ? '贪狼化禄属人脉财、桃花财。' : ''}`,
+    description: `${viTerm(huaLuStar.name)} Hóa Lộc tọa Mệnh, chủ kiếm tiền thuận lợi, được lòng người, nhiều cơ duyên.${huaLuStar.name === '武曲' ? ' Vũ Khúc Hóa Lộc thuộc chính tài, hợp thực nghiệp, tài chính.' : huaLuStar.name === '太阴' ? ' Thái Âm Hóa Lộc thuộc âm tài, bất động sản.' : huaLuStar.name === '贪狼' ? ' Tham Lang Hóa Lộc thuộc tài từ quan hệ, tài đào hoa.' : ''}`,
     palaces: ['命宫'],
-    conditions: { required: [`${huaLuStar.name}化禄坐命宫`] },
-    source: '《紫微斗数全书》',
+    conditions: { required: [`${viTerm(huaLuStar.name)} Hóa Lộc tọa cung Mệnh`] },
+    source: '《紫微斗数全书》 (Tử Vi Đẩu Số Toàn Thư)',
   });
 }
 
@@ -702,14 +727,15 @@ function detectHuaJiRuMingQian(chart: ZiweiChart, patterns: Pattern[]) {
 
     const inMing = palace.branch === chart.mingGongBranch;
     patterns.push({
-      name: `${jiStar.name}化忌入${inMing ? '命' : '迁'}`,
+      id: `${jiStar.name}化忌入${inMing ? '命' : '迁'}`,
+      name: `${viTerm(jiStar.name)} Hóa Kỵ nhập ${inMing ? 'Mệnh' : 'Thiên Di'}`,
       level: 'caution',
       description: inMing
-        ? `${jiStar.name}化忌坐命宫，需留意自身固执、心理障碍或健康隐患，凡事退一步思考。化忌不一定坏，代表此星能量需要特别关注。`
-        : `${jiStar.name}化忌坐迁移宫，外出、远行、人际关系易有波折，宜守不宜动。`,
+        ? `${viTerm(jiStar.name)} Hóa Kỵ tọa cung Mệnh, cần lưu ý sự cố chấp, vướng mắc tâm lý hoặc mầm bệnh tiềm ẩn của bản thân, việc gì cũng nên lùi một bước mà suy xét. Hóa Kỵ không hẳn là xấu, nó cho thấy năng lượng của sao này cần được đặc biệt chú ý.`
+        : `${viTerm(jiStar.name)} Hóa Kỵ tọa cung Thiên Di, ra ngoài, đi xa, quan hệ giao tiếp dễ gặp trắc trở, nên giữ hơn là động.`,
       palaces: [palace.name],
-      conditions: { required: [`${jiStar.name}化忌坐${inMing ? '命' : '迁'}宫`] },
-      source: '《紫微斗数全书》',
+      conditions: { required: [`${viTerm(jiStar.name)} Hóa Kỵ tọa cung ${inMing ? 'Mệnh' : 'Thiên Di'}`] },
+      source: '《紫微斗数全书》 (Tử Vi Đẩu Số Toàn Thư)',
     });
   }
 }
@@ -728,12 +754,13 @@ function detectYangTuoJiaJi(chart: ZiweiChart, patterns: Pattern[]) {
     if (!aPrev && !aNext) continue;
 
     patterns.push({
-      name: '羊陀夹忌',
+      id: '羊陀夹忌',
+      name: 'Kình Đà giáp Kỵ',
       level: 'caution',
-      description: '化忌坐命，左右擎羊陀罗夹命，古书云"羊陀夹忌为败局"，主一生劳碌奔波、坎坷不顺、身心俱疲。需以德行修养与积极做事化解，凡事谨慎为上。',
+      description: 'Hóa Kỵ tọa Mệnh, hai bên có Kình Dương, Đà La giáp Mệnh. Sách xưa viết "羊陀夹忌为败局" (Kình Đà giáp Kỵ là cục thất bại), chủ cả đời bôn ba vất vả, lận đận không thuận, thân tâm mỏi mệt. Cần hóa giải bằng tu dưỡng đức hạnh và tích cực làm việc, việc gì cũng nên thận trọng.',
       palaces: ['命宫', prev.name, next.name],
-      conditions: { required: ['化忌坐命', '擎羊陀罗分居命宫前后两宫'] },
-      source: '《紫微斗数骨髓赋·羊陀夹忌》',
+      conditions: { required: ['Hóa Kỵ tọa Mệnh', 'Kình Dương, Đà La ở hai cung trước và sau cung Mệnh'] },
+      source: '《紫微斗数骨髓赋·羊陀夹忌》 (Tử Vi Đẩu Số Cốt Tủy Phú – Kình Đà giáp Kỵ)',
     });
     return;
   }
@@ -748,12 +775,13 @@ function detectHuoLingJiaMing(chart: ZiweiChart, patterns: Pattern[]) {
   if (!okA && !okB) return;
 
   patterns.push({
-    name: '火铃夹命',
+    id: '火铃夹命',
+    name: 'Hỏa Linh giáp Mệnh',
     level: 'caution',
-    description: '火星铃星分居命宫前后两宫夹命，主性急、易冲动、突发意外或纠纷。需培养耐性、避免冲动决策。',
+    description: 'Hỏa Tinh, Linh Tinh ở hai cung trước và sau giáp cung Mệnh, chủ tính nóng, dễ bốc đồng, dễ gặp sự cố hoặc tranh chấp bất ngờ. Cần rèn tính kiên nhẫn, tránh quyết định bốc đồng.',
     palaces: ['命宫', prev.name, next.name],
-    conditions: { required: ['火星铃星分居命宫前后两宫'] },
-    source: '《紫微斗数全书》',
+    conditions: { required: ['Hỏa Tinh, Linh Tinh ở hai cung trước và sau cung Mệnh'] },
+    source: '《紫微斗数全书》 (Tử Vi Đẩu Số Toàn Thư)',
   });
 }
 
@@ -766,12 +794,13 @@ function detectKongJieJiaMing(chart: ZiweiChart, patterns: Pattern[]) {
   if (!okA && !okB) return;
 
   patterns.push({
-    name: '空劫夹命',
+    id: '空劫夹命',
+    name: 'Không Kiếp giáp Mệnh',
     level: 'caution',
-    description: '地空地劫夹命，主财来财去、思想脱俗、易遁入宗教哲学。古书云"空劫夹命，财不聚"。宜技艺、宗教、研究等不重物质之业。',
+    description: 'Địa Không, Địa Kiếp giáp Mệnh, chủ tiền đến rồi đi, tư tưởng thoát tục, dễ tìm về tôn giáo, triết học. Sách xưa viết "空劫夹命，财不聚" (Không Kiếp giáp Mệnh, tiền không tụ). Hợp các nghề không nặng vật chất như kỹ nghệ, tôn giáo, nghiên cứu.',
     palaces: ['命宫', prev.name, next.name],
-    conditions: { required: ['地空地劫分居命宫前后两宫'] },
-    source: '《紫微斗数全书》',
+    conditions: { required: ['Địa Không, Địa Kiếp ở hai cung trước và sau cung Mệnh'] },
+    source: '《紫微斗数全书》 (Tử Vi Đẩu Số Toàn Thư)',
   });
 }
 
@@ -781,12 +810,13 @@ function detectLianShaYang(chart: ZiweiChart, patterns: Pattern[]) {
   if (!(sanFangSet.has('廉贞') && sanFangSet.has('七杀') && sanFangSet.has('擎羊'))) return;
 
   patterns.push({
-    name: '廉杀羊',
+    id: '廉杀羊',
+    name: 'Liêm Sát Dương',
     level: 'caution',
-    description: '廉贞、七杀、擎羊三星会照命宫三方，传统论述中标记为需要特别关注的组合。此格在大限流年触发时提醒保持谨慎态度：驾驶安全、人际和平、医疗决策需理性——强调主动管理而非消极宿命。',
+    description: 'Ba sao Liêm Trinh, Thất Sát, Kình Dương hội chiếu tam phương cung Mệnh; luận thuật truyền thống xếp đây là tổ hợp cần đặc biệt lưu ý. Khi cách này được kích hoạt trong Đại Hạn, Lưu Niên, hãy giữ thái độ thận trọng: lái xe an toàn, hòa khí trong giao tiếp, quyết định y tế cần lý trí — nhấn mạnh chủ động quản lý chứ không tiêu cực phó mặc số phận.',
     palaces: ['命宫'],
-    conditions: { required: ['廉贞、七杀、擎羊三星会照三方四正'] },
-    source: '《紫微斗数全书·廉杀羊》',
+    conditions: { required: ['Ba sao Liêm Trinh, Thất Sát, Kình Dương hội chiếu tam phương tứ chính'] },
+    source: '《紫微斗数全书·廉杀羊》 (Tử Vi Đẩu Số Toàn Thư – Liêm Sát Dương)',
   });
 }
 
@@ -796,12 +826,13 @@ function detectJuHuoYang(chart: ZiweiChart, patterns: Pattern[]) {
   if (!(sanFangSet.has('巨门') && sanFangSet.has('火星') && sanFangSet.has('擎羊'))) return;
 
   patterns.push({
-    name: '巨火羊',
+    id: '巨火羊',
+    name: 'Cự Hỏa Dương',
     level: 'caution',
-    description: '巨门、火星、擎羊三星会照，传统古籍记载此格为需要警惕之组合（古文"终身缢死"为宿命论表述，今已不适用）。现代理解为：此组合象征直言易触发冲突、情绪激烈时需要自我觉察。修养方向是：练习温和表达、主动化解对立、培养情绪管理。',
+    description: 'Ba sao Cự Môn, Hỏa Tinh, Kình Dương hội chiếu; cổ thư ghi đây là tổ hợp cần cảnh giác (câu cổ văn "终身缢死" – chung thân ải tử – là cách nói định mệnh luận, ngày nay không còn phù hợp). Cách hiểu hiện đại: tổ hợp này tượng trưng cho việc nói thẳng dễ gây xung đột, khi cảm xúc dâng cao cần tự nhận biết. Hướng tu dưỡng: tập diễn đạt ôn hòa, chủ động hóa giải đối lập, rèn khả năng quản lý cảm xúc.',
     palaces: ['命宫'],
-    conditions: { required: ['巨门、火星、擎羊三星会照三方四正'] },
-    source: '《紫微斗数骨髓赋·巨火羊》',
+    conditions: { required: ['Ba sao Cự Môn, Hỏa Tinh, Kình Dương hội chiếu tam phương tứ chính'] },
+    source: '《紫微斗数骨髓赋·巨火羊》 (Tử Vi Đẩu Số Cốt Tủy Phú – Cự Hỏa Dương)',
   });
 }
 
@@ -811,12 +842,13 @@ function detectLingChangTuoWu(chart: ZiweiChart, patterns: Pattern[]) {
   if (!(sanFangSet.has('铃星') && sanFangSet.has('文昌') && sanFangSet.has('陀罗') && sanFangSet.has('武曲'))) return;
 
   patterns.push({
-    name: '铃昌陀武',
+    id: '铃昌陀武',
+    name: 'Linh Xương Đà Vũ',
     level: 'caution',
-    description: '铃星、文昌、陀罗、武曲四星齐会，传统古籍记载此为需要特别关注之组合（古文"限至投河"为宿命论表述，非现代理解）。现代建议为：此组合在大限流年触发时，提醒理性处理重大决策、关注情绪波动、维持生活的稳定性——强调主动管理而非消极等待。',
+    description: 'Bốn sao Linh Tinh, Văn Xương, Đà La, Vũ Khúc cùng hội; cổ thư ghi đây là tổ hợp cần đặc biệt lưu ý (câu cổ văn "限至投河" – hạn đến gieo mình xuống sông – là cách nói định mệnh luận, không phải cách hiểu hiện đại). Lời khuyên hiện đại: khi tổ hợp này được kích hoạt trong Đại Hạn, Lưu Niên, hãy xử lý các quyết định lớn một cách lý trí, để ý dao động cảm xúc, giữ cuộc sống ổn định — nhấn mạnh chủ động quản lý chứ không thụ động chờ đợi.',
     palaces: ['命宫'],
-    conditions: { required: ['铃星、文昌、陀罗、武曲四星会照三方四正'] },
-    source: '《紫微斗数骨髓赋·铃昌陀武》',
+    conditions: { required: ['Bốn sao Linh Tinh, Văn Xương, Đà La, Vũ Khúc hội chiếu tam phương tứ chính'] },
+    source: '《紫微斗数骨髓赋·铃昌陀武》 (Tử Vi Đẩu Số Cốt Tủy Phú – Linh Xương Đà Vũ)',
   });
 }
 
@@ -825,19 +857,20 @@ function detectMaTouDaiJian(chart: ZiweiChart, ming: Palace, patterns: Pattern[]
   if (ming.branch !== 6) return;   // 必须午
   if (!hasStar(ming, '擎羊')) return;
 
-  const required = ['擎羊于午宫坐命'];
+  const required = ['Kình Dương tọa Mệnh tại Ngọ'];
   const bonus: string[] = [];
   const breaking: string[] = [];
-  if (sanFangAllStars(chart).has('七杀') || sanFangAllStars(chart).has('破军')) bonus.push('再会七杀或破军（武职大贵）');
-  if (sanFangAllStars(chart).has('天魁') || sanFangAllStars(chart).has('天钺')) bonus.push('魁钺加照');
+  if (sanFangAllStars(chart).has('七杀') || sanFangAllStars(chart).has('破军')) bonus.push('Gặp thêm Thất Sát hoặc Phá Quân (đại quý về võ nghiệp)');
+  if (sanFangAllStars(chart).has('天魁') || sanFangAllStars(chart).has('天钺')) bonus.push('Khôi Việt gia chiếu');
 
   patterns.push({
-    name: '马头带箭',
+    id: '马头带箭',
+    name: 'Mã đầu đới tiễn',
     level: bonus.length ? 'good' : 'caution',
-    description: '擎羊于午宫坐命，号"马头带箭"，古书云"威镇边疆"。此格象征果决行动力与竞争精神，适合需要执行力与果敢决策的职业方向。传统论述同时提醒此格需要配合吉利星曜才能最优发挥——强调组合影响而非单星独论。',
+    description: 'Kình Dương tọa Mệnh tại Ngọ, gọi là "Mã đầu đới tiễn" (đầu ngựa mang tên), sách xưa viết "威镇边疆" (uy trấn biên cương). Cách này tượng trưng cho hành động quả quyết và tinh thần cạnh tranh, hợp những nghề cần năng lực thực thi và quyết đoán. Luận thuật truyền thống đồng thời nhắc rằng cách này cần cát tinh phối hợp mới phát huy tốt nhất — nhấn mạnh ảnh hưởng của tổ hợp chứ không luận riêng một sao.',
     palaces: ['命宫'],
     conditions: { required, bonus },
-    source: '《紫微斗数骨髓赋·马头带箭》',
+    source: '《紫微斗数骨髓赋·马头带箭》 (Tử Vi Đẩu Số Cốt Tủy Phú – Mã đầu đới tiễn)',
   });
 }
 
@@ -853,14 +886,15 @@ function detectLuCunShouShen(chart: ZiweiChart, patterns: Pattern[]) {
   const inShen = luCunPalace.branch === chart.shenGongBranch;
   if (!inMing && !inShen) return;
   patterns.push({
-    name: inMing ? '禄存守命' : '禄存守身',
+    id: inMing ? '禄存守命' : '禄存守身',
+    name: inMing ? 'Lộc Tồn thủ Mệnh' : 'Lộc Tồn thủ Thân',
     level: 'good',
     description: inMing
-      ? '禄存坐命，主一生衣食无忧、财禄稳定。性格保守，善积累，但羊陀夹禄须防小人。最宜配化禄、左辅右弼方为大格。'
-      : '禄存入身宫，主中年后财源稳定、得禄自享。倪师说「禄存入身，财气近身」——配偶或事业方向能带来稳定财禄。',
+      ? 'Lộc Tồn tọa Mệnh, chủ cả đời cơm áo không lo, tài lộc ổn định. Tính cách bảo thủ, giỏi tích lũy, nhưng Kình Đà giáp Lộc nên phải đề phòng tiểu nhân. Tốt nhất có thêm Hóa Lộc, Tả Phù, Hữu Bật mới thành đại cách.'
+      : 'Lộc Tồn nhập cung Thân, chủ sau trung niên nguồn tài ổn định, có lộc tự hưởng. Thầy Nghê nói「禄存入身，财气近身」(Lộc Tồn nhập Thân, tài khí kề thân) — người phối ngẫu hoặc hướng sự nghiệp có thể mang lại tài lộc ổn định.',
     palaces: [inMing ? '命宫' : '身宫'],
-    conditions: { required: [inMing ? '禄存入命宫' : '禄存入身宫'] },
-    source: '《紫微斗数全书·禄存星》',
+    conditions: { required: [inMing ? 'Lộc Tồn nhập cung Mệnh' : 'Lộc Tồn nhập cung Thân'] },
+    source: '《紫微斗数全书·禄存星》 (Tử Vi Đẩu Số Toàn Thư – sao Lộc Tồn)',
   });
 }
 
@@ -872,14 +906,15 @@ function detectTianMaRuMing(chart: ZiweiChart, patterns: Pattern[]) {
   const inQian = tianMaPalace.branch === ((chart.mingGongBranch + 6) % 12);
   if (!inMing && !inQian) return;
   patterns.push({
-    name: inMing ? '天马入命' : '天马在迁',
+    id: inMing ? '天马入命' : '天马在迁',
+    name: inMing ? 'Thiên Mã nhập Mệnh' : 'Thiên Mã tại Thiên Di',
     level: 'neutral',
     description: inMing
-      ? '天马坐命，主一生奔波、动中得财，宜走商旅、外勤、跨界发展。倪师说「天马入命，无禄不发」——若再会禄存或化禄即「禄马交驰」之富格。'
-      : '天马在迁移宫，主外出有利、远行得财，宜异乡发展。配化禄主异地生财，配煞星则旅途多波折。',
+      ? 'Thiên Mã tọa Mệnh, chủ cả đời bôn ba, trong động mà được tài, hợp buôn bán đi xa, công việc bên ngoài, phát triển đa lĩnh vực. Thầy Nghê nói「天马入命，无禄不发」(Thiên Mã nhập Mệnh, không có Lộc thì không phát) — nếu hội thêm Lộc Tồn hoặc Hóa Lộc thì thành phú cách「禄马交驰」(Lộc Mã giao trì).'
+      : 'Thiên Mã ở cung Thiên Di, chủ ra ngoài có lợi, đi xa được tài, hợp phát triển nơi đất khách. Đi cùng Hóa Lộc chủ sinh tài nơi xứ người, đi cùng sát tinh thì đường đi nhiều trắc trở.',
     palaces: [tianMaPalace.name],
-    conditions: { required: [inMing ? '天马入命宫' : '天马入迁移宫'] },
-    source: '《紫微斗数全书·天马星》',
+    conditions: { required: [inMing ? 'Thiên Mã nhập cung Mệnh' : 'Thiên Mã nhập cung Thiên Di'] },
+    source: '《紫微斗数全书·天马星》 (Tử Vi Đẩu Số Toàn Thư – sao Thiên Mã)',
   });
 }
 
@@ -890,12 +925,13 @@ function detectHuaLuRuCai(chart: ZiweiChart, patterns: Pattern[]) {
   const luStar = cai.stars.find(s => s.type === 'major' && s.siHua === '禄');
   if (!luStar) return;
   patterns.push({
-    name: '化禄入财',
+    id: '化禄入财',
+    name: 'Hóa Lộc nhập Tài Bạch',
     level: 'good',
-    description: `${luStar.name}化禄入财帛宫，主财源畅通、收入稳定。倪师讲化禄是「正财」象征——这个化禄星所代表的能力（${luStar.name}的核心特质）是你赚钱的主轴。配禄存或天马则财源更广。`,
+    description: `${viTerm(luStar.name)} Hóa Lộc nhập cung Tài Bạch, chủ nguồn tài thông suốt, thu nhập ổn định. Thầy Nghê (Nghê Hải Hạ) giảng Hóa Lộc là biểu tượng của「chính tài」— năng lực mà sao Hóa Lộc này đại diện (đặc chất cốt lõi của ${viTerm(luStar.name)}) chính là trục kiếm tiền của bạn. Đi cùng Lộc Tồn hoặc Thiên Mã thì nguồn tài càng rộng.`,
     palaces: ['财帛'],
-    conditions: { required: [`${luStar.name}化禄入财帛宫`] },
-    source: '《紫微斗数全书·四化论》',
+    conditions: { required: [`${viTerm(luStar.name)} Hóa Lộc nhập cung Tài Bạch`] },
+    source: '《紫微斗数全书·四化论》 (Tử Vi Đẩu Số Toàn Thư – luận Tứ Hóa)',
   });
 }
 
@@ -906,12 +942,13 @@ function detectHuaQuanRuGuan(chart: ZiweiChart, patterns: Pattern[]) {
   const quanStar = guan.stars.find(s => s.type === 'major' && s.siHua === '权');
   if (!quanStar) return;
   patterns.push({
-    name: '化权入官',
+    id: '化权入官',
+    name: 'Hóa Quyền nhập Quan Lộc',
     level: 'good',
-    description: `${quanStar.name}化权入官禄宫，主事业有掌控力、能担当独当一面的职位。化权代表权力与执行力——${quanStar.name}化权说明你在事业上能成为决策者或核心执行者，宜走管理或技术权威路线。`,
+    description: `${viTerm(quanStar.name)} Hóa Quyền nhập cung Quan Lộc, chủ sự nghiệp có khả năng nắm quyền kiểm soát, đảm đương được vị trí tự mình gánh vác một mảng. Hóa Quyền đại diện cho quyền lực và năng lực thực thi — ${viTerm(quanStar.name)} Hóa Quyền cho thấy trong sự nghiệp bạn có thể trở thành người ra quyết định hoặc người thực thi chủ chốt, nên đi theo hướng quản lý hoặc chuyên gia kỹ thuật có uy tín.`,
     palaces: ['官禄'],
-    conditions: { required: [`${quanStar.name}化权入官禄宫`] },
-    source: '《紫微斗数全书·四化论》',
+    conditions: { required: [`${viTerm(quanStar.name)} Hóa Quyền nhập cung Quan Lộc`] },
+    source: '《紫微斗数全书·四化论》 (Tử Vi Đẩu Số Toàn Thư – luận Tứ Hóa)',
   });
 }
 
@@ -925,12 +962,13 @@ function detectHuaKeRuMingShen(chart: ZiweiChart, patterns: Pattern[]) {
     if (!keStar) continue;
     const isMing = p.branch === chart.mingGongBranch;
     patterns.push({
-      name: isMing ? '化科入命' : '化科入身',
+      id: isMing ? '化科入命' : '化科入身',
+      name: isMing ? 'Hóa Khoa nhập Mệnh' : 'Hóa Khoa nhập Thân',
       level: 'good',
-      description: `${keStar.name}化科入${isMing ? '命' : '身'}宫，主名声、文书、学术运。倪师讲化科是「贵人星」——${keStar.name}化科带来的是被人看重的特质，宜从事文书、教育、研究、咨询、文创等“以名取利”的方向。`,
+      description: `${viTerm(keStar.name)} Hóa Khoa nhập cung ${isMing ? 'Mệnh' : 'Thân'}, chủ vận về danh tiếng, văn thư, học thuật. Thầy Nghê giảng Hóa Khoa là「sao quý nhân」— ${viTerm(keStar.name)} Hóa Khoa mang lại phẩm chất được người khác coi trọng, nên làm văn thư, giáo dục, nghiên cứu, tư vấn, sáng tạo văn hóa… theo hướng “dùng danh để cầu lợi”.`,
       palaces: [isMing ? '命宫' : '身宫'],
-      conditions: { required: [`${keStar.name}化科入${isMing ? '命' : '身'}宫`] },
-      source: '《紫微斗数全书·四化论》',
+      conditions: { required: [`${viTerm(keStar.name)} Hóa Khoa nhập cung ${isMing ? 'Mệnh' : 'Thân'}`] },
+      source: '《紫微斗数全书·四化论》 (Tử Vi Đẩu Số Toàn Thư – luận Tứ Hóa)',
     });
     return; // 命和身重复时只识别一次
   }
@@ -944,12 +982,13 @@ function detectJiYueTongLiangPartial(chart: ZiweiChart, ming: Palace, patterns: 
   // 避免和上面 detectJiYueTongLiang 重复（4 星齐的不进这里）
   const missing = ['天机', '太阴', '天同', '天梁'].filter(s => !sanFangSet.has(s));
   patterns.push({
-    name: '机月同梁三星会',
+    id: '机月同梁三星会',
+    name: 'Cơ Nguyệt Đồng Lương (hội ba sao)',
     level: 'neutral',
-    description: `机月同梁需天机、太阴、天同、天梁四星齐会三方四正方为完整真格；本盘只会齐其中 3 颗（${has.join('、')}），缺${missing.join('、')}未会，并非完整真格，力量减一档。文质带谋，宜公职、教研、医疗、服务等靠积累与稳定的行业，关键看缺位星与四化的配合。`,
+    description: `Cơ Nguyệt Đồng Lương cần đủ bốn sao Thiên Cơ, Thái Âm, Thiên Đồng, Thiên Lương cùng hội tam phương tứ chính mới là chân cách trọn vẹn; lá số này chỉ hội được 3 sao (${has.map(viTerm).join(', ')}), thiếu ${missing.map(viTerm).join(', ')}, nên không phải chân cách trọn vẹn, lực giảm một bậc. Văn nhã mà có mưu lược, hợp công chức, giảng dạy – nghiên cứu, y tế, dịch vụ… những ngành dựa vào tích lũy và ổn định; mấu chốt là xem sao còn thiếu phối hợp với Tứ Hóa ra sao.`,
     palaces: getSanFangPalaces(chart).filter(p => has.some(s => getMajorStarNames(p).includes(s))).map(p => p.name),
-    conditions: { required: [`三方四正会${has.join('、')}（机月同梁缺${missing.join('、')}）`] },
-    source: '《紫微斗数全书·机月同梁格》',
+    conditions: { required: [`Tam phương tứ chính hội ${has.map(viTerm).join(', ')} (Cơ Nguyệt Đồng Lương thiếu ${missing.map(viTerm).join(', ')})`] },
+    source: '《紫微斗数全书·机月同梁格》 (Tử Vi Đẩu Số Toàn Thư – Cơ Nguyệt Đồng Lương cách)',
   });
   void ming;
 }
@@ -962,14 +1001,15 @@ function detectChangQuTongHui(chart: ZiweiChart, patterns: Pattern[]) {
   if (!ming) return;
   const inMing = hasStar(ming, '文昌') && hasStar(ming, '文曲');
   patterns.push({
-    name: inMing ? '昌曲坐命' : '昌曲同会',
+    id: inMing ? '昌曲坐命' : '昌曲同会',
+    name: inMing ? 'Xương Khúc tọa Mệnh' : 'Xương Khúc đồng hội',
     level: 'good',
     description: inMing
-      ? '文昌文曲同入命宫，主聪明俊秀、文采斐然，宜文学、教育、写作、咨询。最忌化忌——昌曲化忌主文书契约暗亏。'
-      : '文昌文曲同会三方四正，主才华横溢、口才文笔俱佳。宜走需要表达与文采的行业，化科加持则名声大显。',
+      ? 'Văn Xương, Văn Khúc cùng nhập cung Mệnh, chủ thông minh tuấn tú, văn chương xuất sắc, hợp văn học, giáo dục, viết lách, tư vấn. Kỵ nhất Hóa Kỵ — Xương Khúc Hóa Kỵ chủ thiệt ngầm về giấy tờ, hợp đồng.'
+      : 'Văn Xương, Văn Khúc đồng hội tam phương tứ chính, chủ tài hoa dồi dào, ăn nói và văn chương đều giỏi. Hợp những ngành cần khả năng diễn đạt và văn tài; có Hóa Khoa trợ lực thì danh tiếng hiển hách.',
     palaces: ['命宫'],
-    conditions: { required: ['文昌、文曲同会命宫三方四正'] },
-    source: '《紫微斗数全书·文星论》',
+    conditions: { required: ['Văn Xương, Văn Khúc đồng hội tam phương tứ chính cung Mệnh'] },
+    source: '《紫微斗数全书·文星论》 (Tử Vi Đẩu Số Toàn Thư – luận văn tinh)',
   });
 }
 
@@ -978,12 +1018,13 @@ function detectFuBiTongHui(chart: ZiweiChart, patterns: Pattern[]) {
   const sanFangSet = sanFangAllStars(chart);
   if (!sanFangSet.has('左辅') || !sanFangSet.has('右弼')) return;
   patterns.push({
-    name: '辅弼同会',
+    id: '辅弼同会',
+    name: 'Tả Hữu đồng hội',
     level: 'good',
-    description: '左辅右弼同会命宫三方四正，主一生贵人不绝、人缘极佳。最宜领导岗位与团队合作型工作。倪师说「辅弼夹命，平生贵人多」——你不是单打独斗的命，要善用人际网络。',
+    description: 'Tả Phù, Hữu Bật đồng hội tam phương tứ chính cung Mệnh, chủ cả đời quý nhân không dứt, nhân duyên cực tốt. Hợp nhất với vị trí lãnh đạo và công việc làm việc nhóm. Thầy Nghê nói「辅弼夹命，平生贵人多」(Tả Hữu giáp Mệnh, cả đời nhiều quý nhân) — bạn không phải mệnh đơn độc chiến đấu, hãy khéo dùng mạng lưới quan hệ.',
     palaces: ['命宫'],
-    conditions: { required: ['左辅、右弼同会命宫三方四正'] },
-    source: '《紫微斗数全书·辅弼论》',
+    conditions: { required: ['Tả Phù, Hữu Bật đồng hội tam phương tứ chính cung Mệnh'] },
+    source: '《紫微斗数全书·辅弼论》 (Tử Vi Đẩu Số Toàn Thư – luận Tả Hữu)',
   });
 }
 
@@ -992,12 +1033,13 @@ function detectKuiYueTongHui(chart: ZiweiChart, patterns: Pattern[]) {
   const sanFangSet = sanFangAllStars(chart);
   if (!sanFangSet.has('天魁') || !sanFangSet.has('天钺')) return;
   patterns.push({
-    name: '魁钺同会',
+    id: '魁钺同会',
+    name: 'Khôi Việt đồng hội',
     level: 'good',
-    description: '天魁天钺同会命宫三方四正，主"天乙贵人"加持，关键时刻总有贵人提携。倪师说「魁钺夹命，必为贵人」——遇到困难时身边会出现得力相助者，宜主动维护人脉。',
+    description: 'Thiên Khôi, Thiên Việt đồng hội tam phương tứ chính cung Mệnh, chủ được "Thiên Ất quý nhân" phù trợ, vào thời khắc then chốt luôn có quý nhân nâng đỡ. Thầy Nghê nói「魁钺夹命，必为贵人」(Khôi Việt giáp Mệnh, ắt là quý nhân) — khi gặp khó khăn sẽ có người đắc lực giúp đỡ bên cạnh, nên chủ động vun đắp quan hệ.',
     palaces: ['命宫'],
-    conditions: { required: ['天魁、天钺同会命宫三方四正'] },
-    source: '《紫微斗数全书·魁钺论》',
+    conditions: { required: ['Thiên Khôi, Thiên Việt đồng hội tam phương tứ chính cung Mệnh'] },
+    source: '《紫微斗数全书·魁钺论》 (Tử Vi Đẩu Số Toàn Thư – luận Khôi Việt)',
   });
 }
 
@@ -1013,12 +1055,13 @@ function detectKeQuanShuangHui(chart: ZiweiChart, patterns: Pattern[]) {
   }
   if (!hasKe || !hasQuan) return;
   patterns.push({
-    name: '科权双会',
+    id: '科权双会',
+    name: 'Khoa Quyền song hội',
     level: 'good',
-    description: '化科 + 化权 同会三方四正，主名权双美——既有学识/名声（科），又有掌控力（权），宜走"专业权威"路线（如医生、律师、教授、技术骨干），名利双收且根基扎实。',
+    description: 'Hóa Khoa + Hóa Quyền đồng hội tam phương tứ chính, chủ danh và quyền đều đẹp — vừa có học thức/danh tiếng (Khoa), vừa có khả năng nắm quyền (Quyền); hợp con đường "chuyên gia có uy tín" (như bác sĩ, luật sư, giáo sư, trụ cột kỹ thuật), danh lợi đều được mà nền tảng vững chắc.',
     palaces: ['命宫'],
-    conditions: { required: ['化科、化权同会命宫三方四正'] },
-    source: '《紫微斗数全书·四化会照》',
+    conditions: { required: ['Hóa Khoa, Hóa Quyền đồng hội tam phương tứ chính cung Mệnh'] },
+    source: '《紫微斗数全书·四化会照》 (Tử Vi Đẩu Số Toàn Thư – Tứ Hóa hội chiếu)',
   });
 }
 
@@ -1095,32 +1138,32 @@ export function getMingGongSummary(chart: ZiweiChart): {
   const starNames = majorStars.map(s => s.name);
 
   const keywordMap: Record<string, string[]> = {
-    '紫微': ['尊贵', '独立', '领导'],
-    '天机': ['智慧', '机变', '善谋'],
-    '太阳': ['阳刚', '官贵', '慷慨'],
-    '武曲': ['财富', '刚毅', '果断'],
-    '天同': ['温和', '享福', '随缘'],
-    '廉贞': ['才艺', '桃花', '多变'],
-    '天府': ['财库', '稳重', '保守'],
-    '太阴': ['柔美', '财富', '细腻'],
-    '贪狼': ['欲望', '桃花', '多才'],
-    '巨门': ['善辩', '多思', '口才'],
-    '天相': ['辅佐', '行政', '稳健'],
-    '天梁': ['荫护', '医药', '长辈'],
-    '七杀': ['将星', '果决', '孤克'],
-    '破军': ['开创', '变动', '破旧'],
+    '紫微': ['Tôn quý', 'Độc lập', 'Lãnh đạo'],
+    '天机': ['Trí tuệ', 'Linh hoạt', 'Giỏi mưu tính'],
+    '太阳': ['Dương cương', 'Quan quý', 'Hào phóng'],
+    '武曲': ['Giàu có', 'Cương nghị', 'Quả đoán'],
+    '天同': ['Ôn hòa', 'Hưởng phúc', 'Tùy duyên'],
+    '廉贞': ['Tài nghệ', 'Đào hoa', 'Đa biến'],
+    '天府': ['Kho tài', 'Chín chắn', 'Bảo thủ'],
+    '太阴': ['Nhu mỹ', 'Giàu có', 'Tinh tế'],
+    '贪狼': ['Dục vọng', 'Đào hoa', 'Đa tài'],
+    '巨门': ['Giỏi biện luận', 'Suy nghĩ nhiều', 'Tài ăn nói'],
+    '天相': ['Phò tá', 'Hành chính', 'Vững vàng'],
+    '天梁': ['Che chở', 'Y dược', 'Bề trên'],
+    '七杀': ['Tướng tinh', 'Quả quyết', 'Cô khắc'],
+    '破军': ['Khai sáng', 'Biến động', 'Phá cũ'],
   };
 
   const natureMap: Record<string, string> = {
-    '紫微': '帝王星', '天机': '智慧星', '太阳': '贵人星',
-    '武曲': '财帛星', '天同': '福德星', '廉贞': '桃花星',
-    '天府': '财库星', '太阴': '财富星', '贪狼': '桃花星',
-    '巨门': '是非星', '天相': '印绶星', '天梁': '荫庇星',
-    '七杀': '将帅星', '破军': '变动星',
+    '紫微': 'Sao đế vương', '天机': 'Sao trí tuệ', '太阳': 'Sao quý nhân',
+    '武曲': 'Sao tài bạch', '天同': 'Sao phúc đức', '廉贞': 'Sao đào hoa',
+    '天府': 'Sao kho tài', '太阴': 'Sao phú quý', '贪狼': 'Sao đào hoa',
+    '巨门': 'Sao thị phi', '天相': 'Sao ấn thụ', '天梁': 'Sao ấm tý',
+    '七杀': 'Sao tướng soái', '破军': 'Sao biến động',
   };
 
   const keywords = starNames.flatMap(n => keywordMap[n] ?? []).slice(0, 5);
-  const nature = starNames.length > 0 ? (natureMap[starNames[0]] ?? '') : '空宫';
+  const nature = starNames.length > 0 ? (natureMap[starNames[0]] ?? '') : 'Vô Chính Diệu';
 
   return { stars: starNames, keywords, nature };
 }

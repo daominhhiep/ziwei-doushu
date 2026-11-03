@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import type { BirthFormState } from '@/components/BirthForm';
+import { placeNameVi } from './cities';
 
 const STORAGE_KEY = 'ziwei_history';
 const MAX_ENTRIES = 10;
@@ -24,9 +25,9 @@ export function useHistory() {
   const save = useCallback((form: BirthFormState) => {
     const label = [
       form.name,
-      `${form.year}年${form.month}月${form.day}日`,
-      form.city || form.province || '',
-      form.gender === 'male' ? '男' : '女',
+      `${form.day}/${form.month}/${form.year}`,
+      placeNameVi(form.city || form.province || ''),
+      form.gender === 'male' ? 'Nam' : 'Nữ',
     ].filter(Boolean).join(' · ');
 
     const entry: HistoryEntry = {
