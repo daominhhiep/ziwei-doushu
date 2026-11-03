@@ -190,7 +190,10 @@ export default function InsightPanel({ chart, selectedPalace, selectedSiHua }: I
   const [activeTopic, setActiveTopic] = useState<string>('overview');
   const messagesRef = useRef<Message[]>([]); // always-current copy for closures
   const loadingRef = useRef(false);
-  const autoLoaded = useRef(false);
+  // Answers to preset prompts (topics / palaces / Tứ Hóa), so repeat clicks don't call the AI again.
+  const answerCache = useRef<Map<string, string>>(new Map());
+  // A palace / Tứ Hóa the user clicked: offered as a one-tap question instead of calling the AI right away.
+  const [suggestion, setSuggestion] = useState<{ label: string; prompt: string } | null>(null);
   const lastPalaceBranch = useRef<number | undefined>(undefined);
   const lastSiHuaKey = useRef<string | undefined>(undefined);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -205,13 +208,6 @@ export default function InsightPanel({ chart, selectedPalace, selectedSiHua }: I
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
-
-  // Auto-generate 命格总览 on mount
-  useEffect(() => {
-    if (autoLoaded.current) return;
-    autoLoaded.current = true;
-    sendMessage(TOPIC_PROMPTS.overview, true);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Inject palace analysis when palace selected
   useEffect(() => {
@@ -239,7 +235,7 @@ Cách giải chính tinh ở cung này theo hệ thống Nghê Hải Hạ, dẫn
 **【Lời khuyên thực tế】**
 Lời khuyên cụ thể dựa trên cung này.`;
 
-    sendMessage(prompt, true);
+    setSuggestion({ label: `Giải đoán ${palaceVi}`, prompt });
   }, [selectedPalace]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // 注入四化飞化分析
@@ -275,10 +271,10 @@ Trong khung thời gian ${viewLabel}, ${hua} này ảnh hưởng cụ thể th�
 **【Lời khuyên thực tế】**
 Lời khuyên cụ thể, làm được ngay dựa trên Tứ Hóa này.`;
 
-    sendMessage(prompt, true);
+    setSuggestion({ label: `Giải đoán ${starHua}`, prompt });
   }, [selectedSiHua]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const streamResponse = async (apiMessages: { role: 'user' | 'assistant'; content: string }[]) => {
+  const streamResponse = async (apiMessages: { role: 'user' | 'assistant'; content: string }[], cacheKey?: string) => {
     try {
       const res = await fetch('/api/interpret', {
         method: 'POST',
@@ -318,6 +314,7 @@ Lời khuyên cụ thể, làm được ngay dựa trên Tứ Hóa này.`;
           } catch { /* skip */ }
         }
       }
+      if (cacheKey && assistantText.trim()) answerCache.current.set(cacheKey, assistantText);
     } catch (e) {
       const missing = e instanceof Error && e.message === 'api-missing';
       setMessages(prev => [...prev, { role: 'assistant', content: missing ? 'Tính năng giải đoán AI chưa được cấu hình: máy chủ cần khóa ANTHROPIC_API_KEY. Hãy thêm khóa vào tệp .env.local rồi khởi động lại máy chủ. Việc lập lá số không cần khóa này.' : 'Không tạo được phần giải đoán. Hãy thử lại sau ít phút.' }]);
@@ -333,6 +330,15 @@ Lời khuyên cụ thể, làm được ngay dựa trên Tứ Hóa này.`;
     setLoading(true);
 
     const userMsg: Message = { role: 'user', content: text, hidden };
+
+    // Preset prompt answered before → show the saved answer, no AI call.
+    const cached = hidden ? answerCache.current.get(text) : undefined;
+    if (cached) {
+      setMessages(prev => [...prev, userMsg, { role: 'assistant', content: cached }]);
+      loadingRef.current = false;
+      setLoading(false);
+      return;
+    }
     // Capture current messages synchronously via ref (avoids stale closure)
     const apiMessages = [...messagesRef.current, userMsg].map(m => ({
       role: m.role,
@@ -341,7 +347,7 @@ Lời khuyên cụ thể, làm được ngay dựa trên Tứ Hóa này.`;
 
     setMessages(prev => [...prev, userMsg]);
     setInput('');
-    streamResponse(apiMessages);
+    streamResponse(apiMessages, hidden ? text : undefined);
   };
 
   const handleTopicClick = (topicKey: string) => {
@@ -355,7 +361,7 @@ Lời khuyên cụ thể, làm được ngay dựa trên Tứ Hóa này.`;
   };
 
   return (
-    <div className="flex flex-col rounded-xl overflow-hidden card-glass" style={{ height: 'min(75vh, 680px)', minHeight: 420 }}>
+    <div className="flex flex-col rounded-xl overflow-hidden card-glass h-[460px] lg:h-[min(80vh,720px)]">
 
       {/* ── Topic buttons ── */}
       <div className="flex-shrink-0 px-2 pt-2.5 pb-2" style={{ borderBottom: '1px solid var(--t-border)' }}>
@@ -388,7 +394,7 @@ Lời khuyên cụ thể, làm được ngay dựa trên Tứ Hóa này.`;
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center">
             <div className="text-4xl mb-3" style={{ color: 'var(--t-gold)', opacity: 0.1 }}>✦</div>
-            <p className="text-[10px] animate-pulse" style={{ color: 'var(--t-faint)' }}>Đang tạo phần giải đoán mệnh cách…</p>
+            <p className="text-[12px] leading-relaxed max-w-[260px]" style={{ color: 'var(--t-faint)' }}>Chọn một chủ đề ở trên, bấm vào một cung, hoặc đặt câu hỏi để AI giải đoán.</p>
           </div>
         )}
 
@@ -442,6 +448,28 @@ Lời khuyên cụ thể, làm được ngay dựa trên Tứ Hóa này.`;
 
       {/* ── Input ── */}
       <div className="flex-shrink-0 px-3 pb-3 pt-2" style={{ borderTop: '1px solid var(--t-border)' }}>
+        {suggestion && (
+          <div className="flex items-center gap-2 mb-2">
+            <button
+              type="button"
+              onClick={() => { const s = suggestion; setSuggestion(null); sendMessage(s.prompt, true); }}
+              disabled={loading}
+              className="flex-1 min-w-0 truncate text-left text-[12px] px-3 py-2 rounded-lg transition-colors disabled:opacity-40"
+              style={{ background: 'rgba(212,168,67,0.10)', border: '1px solid rgba(212,168,67,0.3)', color: 'var(--t-gold)' }}
+            >
+              ✦ {suggestion.label}
+            </button>
+            <button
+              type="button"
+              onClick={() => setSuggestion(null)}
+              aria-label="Bỏ gợi ý"
+              className="text-[12px] px-2 py-2 rounded-lg"
+              style={{ color: 'var(--t-faint)', border: '1px solid var(--t-border)' }}
+            >
+              ✕
+            </button>
+          </div>
+        )}
         <div className="flex gap-2">
           <input
             type="text"

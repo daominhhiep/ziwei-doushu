@@ -56,10 +56,15 @@ export default function ChartPage() {
           gap: 20, marginTop: 16, alignItems: 'start',
         }}
       >
-        <ChartBoard chart={chart} onPalaceSelect={setSelectedPalace} />
-        <div className="flex flex-col gap-4 min-w-0">
-          <ChartSummary chart={chart} />
+        {/* Phone order: chart → AI chat → summary. Desktop: chat sticks beside chart + summary. */}
+        <div className="min-w-0 lg:col-start-1 lg:row-start-1">
+          <ChartBoard chart={chart} onPalaceSelect={setSelectedPalace} />
+        </div>
+        <div className="min-w-0 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:sticky lg:top-4 self-start">
           <InsightPanel chart={chart} selectedPalace={selectedPalace} />
+        </div>
+        <div className="min-w-0 lg:col-start-1 lg:row-start-2">
+          <ChartSummary chart={chart} />
         </div>
       </div>
     </main>
