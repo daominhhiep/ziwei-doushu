@@ -355,7 +355,7 @@ Lời khuyên cụ thể, làm được ngay dựa trên Tứ Hóa này.`;
   };
 
   return (
-    <div className="flex flex-col h-full rounded-xl overflow-hidden card-glass">
+    <div className="flex flex-col rounded-xl overflow-hidden card-glass" style={{ height: 'min(75vh, 680px)', minHeight: 420 }}>
 
       {/* ── Topic buttons ── */}
       <div className="flex-shrink-0 px-2 pt-2.5 pb-2" style={{ borderBottom: '1px solid var(--t-border)' }}>
