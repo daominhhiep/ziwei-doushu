@@ -6,6 +6,8 @@
  * Base map generated from iztro zh-CN ↔ vi-VN locales, with manual corrections and additions.
  */
 export const VI_TERMS: Record<string, string> = {
+  "副截": "Phó Triệt",
+  "副旬": "Phó Tuần",
   "丁": "Đinh",
   "七杀": "Thất Sát",
   "三台": "Tam Thai",
