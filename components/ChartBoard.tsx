@@ -105,19 +105,21 @@ export default function ChartBoard({ chart, onStarSelect, onPalaceSelect, onSiHu
         animate={{ opacity: 1, y: 0 }}
         className="text-center mb-3"
       >
-        <div className="text-[10px] tracking-[0.5em] uppercase mb-1" style={{ color: 'var(--t-faint)' }}>
+        <div className="text-[10px] tracking-[0.3em] uppercase mb-1" style={{ color: 'var(--t-faint)' }}>
           Zi Wei Dou Shu
         </div>
-        <h2 className="text-sm tracking-[0.25em] font-medium" style={{ color: 'var(--t-gold)' }}>
+        <h2 className="text-base tracking-[0.05em] font-semibold" style={{ color: 'var(--t-gold)' }}>
           {chart.birthInfo.name ? `${chart.birthInfo.name} · ` : ''}Lá số Tử Vi
         </h2>
       </motion.div>
 
-      {/* 4x4 命盘网格（含 SVG 叠加层） */}
+      {/* 4x4 命盘网格（含 SVG 叠加层） — scrolls horizontally on narrow screens instead of clipping */}
+      <div className="overflow-x-auto -mx-1 px-1 pb-1">
       <div
         className="grid rounded-xl overflow-hidden relative"
         style={{
-          gridTemplateColumns: 'repeat(4, 1fr)',
+          minWidth: 600,
+          gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
           gridTemplateRows: 'repeat(4, auto)',
           gap: '1px',
           background: 'var(--t-border)',
@@ -159,11 +161,11 @@ export default function ChartBoard({ chart, onStarSelect, onPalaceSelect, onSiHu
           </div>
 
           <div className="text-center space-y-1">
-            <div className="text-[9px] tracking-[0.3em] font-medium" style={{ color: 'var(--t-gold)' }}>Tử Vi Đẩu Số</div>
-            <div className="text-[10px] space-y-0.5" style={{ color: 'var(--t-faint)' }}>
-              <div>Mệnh tại <span style={{ color: 'var(--t-gold)', opacity: 0.7 }}>{viTerm(BRANCHES[chart.mingGongBranch])}</span></div>
-              <div>Thân tại <span className="text-sky-500/70">{viTerm(BRANCHES[chart.shenGongBranch])}</span></div>
-              <div className="text-[9px]" style={{ color: 'var(--t-gold)', opacity: 0.75 }}>{viTerm(chart.wuxingJuName)}</div>
+            <div className="text-[11px] tracking-[0.2em] font-medium" style={{ color: 'var(--t-gold)' }}>Tử Vi Đẩu Số</div>
+            <div className="text-[12px] space-y-0.5" style={{ color: 'var(--t-faint)' }}>
+              <div>Mệnh tại <span style={{ color: 'var(--t-gold)' }}>{viTerm(BRANCHES[chart.mingGongBranch])}</span></div>
+              <div>Thân tại <span className="text-sky-400">{viTerm(BRANCHES[chart.shenGongBranch])}</span></div>
+              <div className="text-[11px]" style={{ color: 'var(--t-gold)' }}>{viTerm(chart.wuxingJuName)}</div>
             </div>
           </div>
 
@@ -172,14 +174,14 @@ export default function ChartBoard({ chart, onStarSelect, onPalaceSelect, onSiHu
             return (
               <div className="border border-purple-500/30 rounded-lg px-3 py-1.5 text-center"
                 style={{ background: 'rgba(147,51,234,0.06)' }}>
-                <div className="text-[8px] text-purple-500/80 mb-0.5 tracking-wider">Đại hạn hiện tại</div>
-                <div className="text-[12px] text-purple-400 font-medium tabular-nums">{dx.startAge}–{dx.endAge} tuổi</div>
-                <div className="text-[9px] text-purple-500/60">{viTerm(dx.palaceName)}</div>
+                <div className="text-[10px] text-purple-400 mb-0.5 tracking-wider">Đại hạn hiện tại</div>
+                <div className="text-[14px] text-purple-300 font-medium tabular-nums">{dx.startAge}–{dx.endAge} tuổi</div>
+                <div className="text-[11px] text-purple-400">{viTerm(dx.palaceName)}</div>
               </div>
             );
           })()}
 
-          <div className="text-[8px] text-center leading-relaxed font-mono" style={{ color: 'var(--t-faint)', opacity: 0.75 }}>
+          <div className="text-[10px] text-center leading-relaxed font-mono" style={{ color: 'var(--t-faint)' }}>
             {chart.lunarInfo.lunarYear}·{chart.lunarInfo.isLeapMonth ? 'nhuận ' : ''}
             {chart.lunarInfo.lunarMonth}·{chart.lunarInfo.lunarDay}
           </div>
@@ -261,13 +263,14 @@ export default function ChartBoard({ chart, onStarSelect, onPalaceSelect, onSiHu
           )}
         </AnimatePresence>
       </div>
+      </div>
 
       {/* 图例 */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.7 }}
-        className="mt-3 flex items-center justify-center gap-2 text-[9px] flex-wrap"
+        className="mt-3 flex items-center justify-center gap-2 text-[11px] flex-wrap"
       >
         {[
           { h: '化禄', c: 'text-emerald-500 border-emerald-500/30' },
