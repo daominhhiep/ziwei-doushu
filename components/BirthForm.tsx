@@ -4,8 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import type { BirthInfo } from '@/lib/ziwei/types';
 import { SHICHEN } from '@/lib/ziwei/constants';
 import { useTheme } from '@/components/ThemeProvider';
-import { PROVINCES, placeNameVi } from '@/lib/ziwei/cities';
-import { formToBirthInfo, calcTrueSolarBranch } from '@/lib/ziwei/share';
+import { VN_PROVINCES } from '@/lib/ziwei/cities-vn';
+import { formToBirthInfo, calcTrueSolarBranch, CLOCK_MERIDIAN } from '@/lib/ziwei/share';
 
 export interface BirthFormState {
   name: string;
@@ -51,7 +51,7 @@ export default function BirthForm({ onSubmit, loading, initialData, onFormSave, 
     unknownTime: initialData?.unknownTime ?? false,
     province: initialData?.province ?? '',
     city: initialData?.city ?? '',
-    longitude: initialData?.longitude ?? 120,
+    longitude: initialData?.longitude ?? CLOCK_MERIDIAN,
     gender: initialData?.gender ?? 'male',
   });
 
@@ -64,11 +64,6 @@ export default function BirthForm({ onSubmit, loading, initialData, onFormSave, 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form]);
 
-  const cityList = useMemo(() => {
-    const prov = PROVINCES.find(p => p.name === form.province);
-    return prov ? prov.cities : [];
-  }, [form.province]);
-
   const branch = useMemo(() => {
     if (form.unknownTime) return 0;
     return calcTrueSolarBranch(
@@ -78,7 +73,7 @@ export default function BirthForm({ onSubmit, loading, initialData, onFormSave, 
     );
   }, [form.clockHour, form.clockMinute, form.longitude, form.unknownTime]);
 
-  const offsetMin = Math.round((form.longitude - 120) * 4);
+  const offsetMin = Math.round((form.longitude - CLOCK_MERIDIAN) * 4);
   const shichenInfo = SHICHEN[branch];
 
   // ─── 校验逻辑 ───────────────────────────────────────────
@@ -100,7 +95,7 @@ export default function BirthForm({ onSubmit, loading, initialData, onFormSave, 
   // ─── 完成度（用于进度条） ────────────────────────────────
   const steps = [
     !!form.year && !!form.month && !!form.day && !errors.year && !errors.month && !errors.day,
-    !!form.province && !!form.city,
+    !!form.province,
     form.unknownTime || (!!form.clockHour && !!form.clockMinute),
     true, // 性别有默认值
   ];
@@ -111,22 +106,15 @@ export default function BirthForm({ onSubmit, loading, initialData, onFormSave, 
   const summaryText = showSummary
     ? [
         `${d}/${m}/${y}`,
-        placeNameVi(form.city || (form.province ? form.province : '')),
+        form.province,
         form.unknownTime ? 'Không rõ giờ sinh' : SHICHEN[branch].nameVi,
         form.gender === 'male' ? 'Nam' : 'Nữ',
       ].filter(Boolean).join(' · ')
     : '';
 
   const handleProvince = (prov: string) => {
-    const provData = PROVINCES.find(p => p.name === prov);
-    const firstCity = provData?.cities[0];
-    setForm({ ...form, province: prov, city: firstCity?.name || '', longitude: firstCity?.longitude ?? 120 });
-  };
-
-  const handleCity = (cityName: string) => {
-    const prov = PROVINCES.find(p => p.name === form.province);
-    const cityData = prov?.cities.find(c => c.name === cityName);
-    setForm({ ...form, city: cityName, longitude: cityData?.longitude ?? 120 });
+    const provData = VN_PROVINCES.find(p => p.name === prov);
+    setForm({ ...form, province: provData ? prov : '', city: provData ? prov : '', longitude: provData?.longitude ?? CLOCK_MERIDIAN });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -283,33 +271,18 @@ export default function BirthForm({ onSubmit, loading, initialData, onFormSave, 
       {/* ── 出生地点 ── */}
       <div style={{ marginBottom: '16px' }}>
         <label style={{ display: 'block', fontSize: '11px', color: labelClr, marginBottom: '6px', letterSpacing: '0.05em' }}>Nơi sinh (để hiệu chỉnh giờ mặt trời thực)</label>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-          <select
-            value={form.province}
-            onChange={e => handleProvince(e.target.value)}
-            style={inputStyle}
-            onFocus={e => { e.target.style.borderColor = focusBorder; }}
-            onBlur={e => { e.target.style.borderColor = inputBorder; }}
-          >
-            <option value="">Tỉnh / thành phố</option>
-            {PROVINCES.map(p => (
-              <option key={p.name} value={p.name}>{placeNameVi(p.name)}</option>
-            ))}
-          </select>
-          <select
-            value={form.city}
-            onChange={e => handleCity(e.target.value)}
-            disabled={!form.province}
-            style={{ ...inputStyle, opacity: form.province ? 1 : 0.45 }}
-            onFocus={e => { e.target.style.borderColor = focusBorder; }}
-            onBlur={e => { e.target.style.borderColor = inputBorder; }}
-          >
-            <option value="">{form.province ? 'Thành phố / quận' : 'Chọn tỉnh trước'}</option>
-            {cityList.map(c => (
-              <option key={c.name} value={c.name}>{placeNameVi(c.name)}</option>
-            ))}
-          </select>
-        </div>
+        <select
+          value={form.province}
+          onChange={e => handleProvince(e.target.value)}
+          style={inputStyle}
+          onFocus={e => { e.target.style.borderColor = focusBorder; }}
+          onBlur={e => { e.target.style.borderColor = inputBorder; }}
+        >
+          <option value="">Chọn tỉnh / thành phố</option>
+          {VN_PROVINCES.map(p => (
+            <option key={p.name} value={p.name}>{p.name}</option>
+          ))}
+        </select>
         <AnimatePresence mode="wait">
           {form.province ? (
             <motion.p
@@ -319,7 +292,7 @@ export default function BirthForm({ onSubmit, loading, initialData, onFormSave, 
               exit={{ opacity: 0 }}
               style={{ fontSize: '10px', color: isDark ? 'rgba(180,210,235,0.85)' : 'rgba(100,70,10,0.5)', marginTop: '5px' }}
             >
-              {form.city ? placeNameVi(form.city) : '(Hãy chọn thành phố)'} · Kinh độ {form.longitude.toFixed(1)}°Đ · Chênh lệch {offsetMin > 0 ? '+' : ''}{offsetMin} phút
+              {form.province} · Kinh độ {form.longitude.toFixed(1)}°Đ · Chênh lệch {offsetMin > 0 ? '+' : ''}{offsetMin} phút
             </motion.p>
           ) : (
             <motion.p
@@ -337,7 +310,7 @@ export default function BirthForm({ onSubmit, loading, initialData, onFormSave, 
 
       {/* ── 出生时间 ── */}
       <div style={{ marginBottom: '16px' }}>
-        <label style={{ display: 'block', fontSize: '11px', color: labelClr, marginBottom: '6px', letterSpacing: '0.05em' }}>Giờ sinh (giờ Bắc Kinh, UTC+8)</label>
+        <label style={{ display: 'block', fontSize: '11px', color: labelClr, marginBottom: '6px', letterSpacing: '0.05em' }}>Giờ sinh (giờ Việt Nam, UTC+7)</label>
         <div style={{ borderRadius: '14px', padding: '12px', background: panelBg, border: `1px solid ${panelBorder}`, opacity: form.unknownTime ? 0.45 : 1, pointerEvents: form.unknownTime ? 'none' : 'auto', transition: 'opacity 0.2s' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '8px' }}>
             <select
